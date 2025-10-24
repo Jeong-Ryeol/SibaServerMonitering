@@ -37,6 +37,11 @@ app.use(express.static('public'));
 
 // ==================== 사용자 API ====================
 
+// 세션 확인
+app.get('/api/check-session', (req, res) => {
+  res.json({ authorized: !!req.session.siteAuthorized });
+});
+
 // 사이트 비밀번호 확인
 app.post('/api/verify-site-password', (req, res) => {
   const { password } = req.body;
@@ -102,6 +107,11 @@ app.get('/api/stats', (req, res) => {
 });
 
 // ==================== 관리자 API ====================
+
+// 관리자 세션 확인
+app.get('/api/admin/check-session', (req, res) => {
+  res.json({ authorized: !!req.session.adminAuthorized });
+});
 
 // 관리자 비밀번호 확인
 app.post('/api/admin/verify-password', (req, res) => {

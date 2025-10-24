@@ -720,7 +720,25 @@
         }
 
         // 엔터키로 로그인
+        // 페이지 로드 시 세션 확인
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/admin/check-session');
+                const data = await response.json();
+
+                if (data.authorized) {
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('adminPanel').classList.add('active');
+                    loadPendingReports();
+                }
+            } catch (error) {
+                console.error('세션 확인 실패:', error);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            checkSession(); // 페이지 로드 시 세션 확인
+
             document.getElementById('adminPassword').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') verifyAdminPassword();
             });
