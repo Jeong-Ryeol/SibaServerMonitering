@@ -196,6 +196,178 @@
             font-weight: 500;
         }
 
+        /* 드롭다운 섹션 */
+        .dropdown-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 40px;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .dropdown-header {
+            padding: 25px 35px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .dropdown-header:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .dropdown-header h2 {
+            background: linear-gradient(135deg, #667eea, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8em;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .dropdown-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s;
+            color: #667eea;
+        }
+
+        .dropdown-icon.open {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            padding: 0 35px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s;
+        }
+
+        .dropdown-content.open {
+            padding: 0 35px 35px 35px;
+            max-height: 5000px;
+            transition: max-height 0.4s ease-in, padding 0.4s;
+        }
+
+        /* 공지사항 */
+        .announcements-section h2 {
+            margin-bottom: 25px;
+        }
+
+        .announcement-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #f0f0f0;
+            transition: all 0.3s;
+        }
+
+        .announcement-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .announcement-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .announcement-content {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .announcement-date {
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        /* 제보 제출 폼 */
+        .report-form-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 40px;
+        }
+
+        .report-form-section h2 {
+            background: linear-gradient(135deg, #667eea, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 3px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #667eea, #f5576c) border-box;
+            border-radius: 15px;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.4s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            transform: scale(1.01);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .amount-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .amount-input-wrapper input {
+            flex: 1;
+            padding-right: 150px !important;
+        }
+
+        .amount-unit-display {
+            position: absolute;
+            right: 20px;
+            color: #999;
+            font-size: 0.95em;
+            pointer-events: none;
+            font-weight: 500;
+        }
+
         .search-section {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -203,6 +375,7 @@
             border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 40px;
         }
 
         .search-section h2 {
@@ -320,9 +493,64 @@
 
         .no-results {
             text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(102, 187, 106, 0.1));
+            border-radius: 25px;
+            border: 3px solid #4caf50;
+            box-shadow: 0 10px 40px rgba(76, 175, 80, 0.3);
+        }
+
+        .no-results-text {
+            font-size: 2em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulseScale 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseScale {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.3));
+            }
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 20px rgba(76, 175, 80, 0.6));
+            }
+        }
+
+        .blacklist-header {
+            text-align: center;
             padding: 40px;
-            color: #999;
-            font-size: 1.2em;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.15), rgba(200, 35, 51, 0.15));
+            border-radius: 25px;
+            border: 3px solid #dc3545;
+            box-shadow: 0 10px 40px rgba(220, 53, 69, 0.4);
+            margin-bottom: 30px;
+        }
+
+        .blacklist-title {
+            font-size: 2.5em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #dc3545, #c82333, #a71d2a);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulseScaleRed 2s ease-in-out infinite, gradientShift 3s ease infinite;
+        }
+
+        @keyframes pulseScaleRed {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 15px rgba(220, 53, 69, 0.4));
+            }
+            50% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 30px rgba(220, 53, 69, 0.7));
+            }
         }
 
         .error-message {
@@ -335,7 +563,7 @@
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
     </style>
 </head>
@@ -344,12 +572,12 @@
         <!-- 비밀번호 입력 화면 -->
         <div class="password-screen" id="passwordScreen">
             <h1>FIVEM : FREEDOM</h1>
-            <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">Enter the password to access</p>
+            <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">비밀번호를 입력하세요</p>
             <div class="password-input-group">
-                <input type="password" id="sitePassword" placeholder="Password" />
+                <input type="password" id="sitePassword" placeholder="비밀번호" />
             </div>
             <div id="passwordError" class="error-message hidden"></div>
-            <button class="btn btn-primary" onclick="verifySitePassword()">Enter</button>
+            <button class="btn btn-primary" onclick="verifySitePassword()">확인</button>
         </div>
 
         <!-- 메인 화면 -->
@@ -361,40 +589,207 @@
             <div class="stats">
                 <div class="stat-card">
                     <div class="stat-number" id="onlineUsers">400</div>
-                    <div class="stat-label">Online Users</div>
+                    <div class="stat-label">FREEDOM 이용자 수</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="activeUsers">500</div>
-                    <div class="stat-label">Active Members</div>
+                    <div class="stat-number" id="fraudCount">0</div>
+                    <div class="stat-label">등록된 사기꾼</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Always Online</div>
+                    <div class="stat-number" id="lastUpdate">-</div>
+                    <div class="stat-label">최근 업데이트</div>
                 </div>
             </div>
 
             <div class="search-section">
                 <h2>고유번호를 입력하세요</h2>
                 <div class="search-box">
-                    <input type="number" id="uniqueIdInput" placeholder="고유번호(예:2200)" />
-                    <button onclick="searchFraudReports()">Search</button>
+                    <input type="number" id="uniqueIdInput" placeholder="고유번호 (예시 : 2200)" />
+                    <button onclick="searchFraudReports()">조회</button>
                 </div>
 
                 <div id="searchError" class="error-message hidden"></div>
 
                 <div class="results" id="results"></div>
             </div>
+
+            <!-- 공지사항 드롭다운 -->
+            <div class="dropdown-section">
+                <div class="dropdown-header" onclick="toggleDropdown('announcements')">
+                    <h2>📢 공지사항</h2>
+                    <span class="dropdown-icon open" id="announcements-icon">▼</span>
+                </div>
+                <div class="dropdown-content open" id="announcements-content">
+                    <div id="announcementsList"></div>
+                </div>
+            </div>
+
+            <!-- 사기 신고 제출 드롭다운 -->
+            <div class="dropdown-section">
+                <div class="dropdown-header" onclick="toggleDropdown('report')">
+                    <h2>🚨 사기 신고 제출</h2>
+                    <span class="dropdown-icon" id="report-icon">▼</span>
+                </div>
+                <div class="dropdown-content" id="report-content">
+                    <div id="reportMessage" class="error-message hidden"></div>
+                    <div class="form-group">
+                        <label>신청자 고유번호</label>
+                        <input type="number" id="reporterUniqueId" placeholder="본인의 고유번호" />
+                    </div>
+                    <div class="form-group">
+                        <label>신청자 닉네임</label>
+                        <input type="text" id="reporterNickname" placeholder="본인의 닉네임" />
+                    </div>
+                    <div class="form-group">
+                        <label>디스코드 아이디</label>
+                        <input type="text" id="discordId" placeholder="예: username#1234" />
+                    </div>
+                    <div class="form-group">
+                        <label>날짜</label>
+                        <input type="date" id="reportDate" />
+                    </div>
+                    <div class="form-group">
+                        <label>먹튀범 고유번호</label>
+                        <input type="number" id="fraudsterUniqueId" placeholder="사기범의 고유번호" />
+                    </div>
+                    <div class="form-group">
+                        <label>금액</label>
+                        <div class="amount-input-wrapper">
+                            <input type="number" id="amount" placeholder="피해 금액" oninput="updateAmountDisplay('amount', 'amountDisplay')" />
+                            <span class="amount-unit-display" id="amountDisplay"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>사유</label>
+                        <textarea id="reason" placeholder="사기 피해 내용을 상세히 작성해주세요"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitReport()">제보 제출</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // F12 및 개발자 도구 차단
+        (function() {
+            // 우클릭 차단
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C 차단
+            document.addEventListener('keydown', function(e) {
+                // F12
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+I (개발자 도구)
+                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+J (콘솔)
+                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+U (소스 보기)
+                if (e.ctrlKey && e.key === 'u') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Ctrl+Shift+C (요소 검사)
+                if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Cmd+Option+I (Mac 개발자 도구)
+                if (e.metaKey && e.altKey && e.key === 'i') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Cmd+Option+J (Mac 콘솔)
+                if (e.metaKey && e.altKey && e.key === 'j') {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Cmd+Option+C (Mac 요소 검사)
+                if (e.metaKey && e.altKey && e.key === 'c') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // 개발자 도구 열림 감지
+            const devtools = /./;
+            devtools.toString = function() {
+                this.opened = true;
+            }
+
+            setInterval(function() {
+                console.clear();
+            }, 1000);
+        })();
+
+        // 금액 단위 변환 함수
+        function convertAmountToKoreanUnit(amount) {
+            if (!amount || amount == 0) return '';
+
+            const num = parseInt(amount);
+            if (isNaN(num)) return '';
+
+            if (num >= 1000000000000) {
+                return Math.floor(num / 1000000000000) + '조';
+            } else if (num >= 100000000000) {
+                return Math.floor(num / 100000000000) + '00억';
+            } else if (num >= 10000000000) {
+                return Math.floor(num / 10000000000) + '0억';
+            } else if (num >= 1000000000) {
+                return Math.floor(num / 100000000) + '억';
+            } else if (num >= 100000000) {
+                return Math.floor(num / 100000000) + '억';
+            } else if (num >= 10000000) {
+                return Math.floor(num / 10000000) + '00만';
+            } else if (num >= 1000000) {
+                return Math.floor(num / 1000000) + '0만';
+            } else if (num >= 100000) {
+                return Math.floor(num / 10000) + '만';
+            } else if (num >= 10000) {
+                return Math.floor(num / 10000) + '만원';
+            } else if (num >= 1000) {
+                return num + '원';
+            } else if (num >= 100) {
+                return num + '원';
+            } else if (num >= 10) {
+                return num + '원';
+            } else {
+                return num + '원';
+            }
+        }
+
+        // 금액 표시 업데이트
+        function updateAmountDisplay(inputId, displayId) {
+            const input = document.getElementById(inputId);
+            const display = document.getElementById(displayId);
+            const unitText = convertAmountToKoreanUnit(input.value);
+            display.textContent = unitText;
+        }
+
         // 비밀번호 확인
         async function verifySitePassword() {
             const password = document.getElementById('sitePassword').value;
             const errorDiv = document.getElementById('passwordError');
 
             if (!password) {
-                errorDiv.textContent = 'Please enter a password';
+                errorDiv.textContent = '비밀번호를 입력하세요';
                 errorDiv.classList.remove('hidden');
                 return;
             }
@@ -412,12 +807,13 @@
                     document.getElementById('passwordScreen').style.display = 'none';
                     document.getElementById('mainScreen').classList.add('active');
                     loadStats();
+                    loadAnnouncements();
                 } else {
-                    errorDiv.textContent = data.message || 'Incorrect password';
+                    errorDiv.textContent = data.message || '비밀번호가 올바르지 않습니다';
                     errorDiv.classList.remove('hidden');
                 }
             } catch (error) {
-                errorDiv.textContent = 'Server error occurred';
+                errorDiv.textContent = '서버 오류가 발생했습니다';
                 errorDiv.classList.remove('hidden');
             }
         }
@@ -439,7 +835,14 @@
                 const response = await fetch('/api/stats');
                 const data = await response.json();
                 document.getElementById('onlineUsers').textContent = data.onlineUsers;
-                document.getElementById('activeUsers').textContent = data.activeUsers;
+                document.getElementById('fraudCount').textContent = data.fraudCount + '명';
+
+                // 날짜 포맷팅 (MM.DD 형식)
+                const lastUpdate = new Date(data.lastUpdate);
+                const month = String(lastUpdate.getMonth() + 1).padStart(2, '0');
+                const day = String(lastUpdate.getDate()).padStart(2, '0');
+                const formattedDate = `${month}.${day}`;
+                document.getElementById('lastUpdate').textContent = formattedDate;
             } catch (error) {
                 console.error('Failed to load stats:', error);
             }
@@ -455,7 +858,7 @@
             resultsDiv.innerHTML = '';
 
             if (!uniqueId) {
-                errorDiv.textContent = 'Please enter a unique ID';
+                errorDiv.textContent = '고유번호를 입력하세요';
                 errorDiv.classList.remove('hidden');
                 return;
             }
@@ -465,44 +868,144 @@
                 const data = await response.json();
 
                 if (!data.success) {
-                    errorDiv.textContent = data.message || 'Search failed';
+                    errorDiv.textContent = data.message || '조회 실패';
                     errorDiv.classList.remove('hidden');
                     return;
                 }
 
                 if (data.data.length === 0) {
-                    resultsDiv.innerHTML = '<div class="no-results">No fraud reports found for this ID</div>';
+                    resultsDiv.innerHTML = '<div class="no-results"><div class="no-results-text">🛡️ 사기 전적이 없습니다! 🛡️</div></div>';
                     return;
                 }
+
+                // 블랙리스트 헤더 추가
+                resultsDiv.innerHTML = '<div class="blacklist-header"><div class="blacklist-title">⚠️ 블랙리스트 ⚠️</div></div>';
 
                 data.data.forEach(report => {
                     const item = document.createElement('div');
                     item.className = 'result-item';
                     item.innerHTML = `
-                        <h3>Fraud Report #${report.id}</h3>
+                        <h3>사기 전적 #${report.id}</h3>
                         <div class="result-detail">
                             <div class="result-detail-item">
-                                <div class="result-detail-label">Date</div>
+                                <div class="result-detail-label">날짜</div>
                                 <div class="result-detail-value">${new Date(report.report_date).toLocaleDateString('ko-KR')}</div>
                             </div>
                             <div class="result-detail-item">
-                                <div class="result-detail-label">Unique ID</div>
+                                <div class="result-detail-label">고유번호</div>
                                 <div class="result-detail-value">${report.unique_id}</div>
                             </div>
                             <div class="result-detail-item">
-                                <div class="result-detail-label">Amount</div>
-                                <div class="result-detail-value">${report.amount.toLocaleString()} KRW</div>
+                                <div class="result-detail-label">금액</div>
+                                <div class="result-detail-value">${report.amount.toLocaleString()}</div>
                             </div>
                         </div>
                         <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 10px;">
-                            <div class="result-detail-label">Reason</div>
+                            <div class="result-detail-label">사유</div>
                             <div class="result-detail-value">${report.reason}</div>
                         </div>
                     `;
                     resultsDiv.appendChild(item);
                 });
             } catch (error) {
-                errorDiv.textContent = 'Server error occurred';
+                errorDiv.textContent = '서버 오류가 발생했습니다';
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        // 공지사항 로드
+        async function loadAnnouncements() {
+            try {
+                const response = await fetch('/api/announcements');
+                const data = await response.json();
+
+                const announcementsDiv = document.getElementById('announcementsList');
+
+                if (data.success && data.data.length > 0) {
+                    announcementsDiv.innerHTML = '';
+                    data.data.forEach(announcement => {
+                        const item = document.createElement('div');
+                        item.className = 'announcement-item';
+                        item.innerHTML = `
+                            <div class="announcement-title">${announcement.title}</div>
+                            <div class="announcement-content">${announcement.content}</div>
+                            <div class="announcement-date">${new Date(announcement.created_at).toLocaleString('ko-KR')}</div>
+                        `;
+                        announcementsDiv.appendChild(item);
+                    });
+                } else {
+                    announcementsDiv.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">등록된 공지사항이 없습니다.</div>';
+                }
+            } catch (error) {
+                console.error('Failed to load announcements:', error);
+            }
+        }
+
+        // 드롭다운 토글
+        function toggleDropdown(section) {
+            const content = document.getElementById(section + '-content');
+            const icon = document.getElementById(section + '-icon');
+
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+
+        // 제보 제출
+        async function submitReport() {
+            const errorDiv = document.getElementById('reportMessage');
+            const reporterUniqueId = document.getElementById('reporterUniqueId').value;
+            const reporterNickname = document.getElementById('reporterNickname').value;
+            const discordId = document.getElementById('discordId').value;
+            const reportDate = document.getElementById('reportDate').value;
+            const fraudsterUniqueId = document.getElementById('fraudsterUniqueId').value;
+            const amount = document.getElementById('amount').value;
+            const reason = document.getElementById('reason').value;
+
+            errorDiv.classList.add('hidden');
+
+            if (!reporterUniqueId || !reporterNickname || !discordId || !reportDate || !fraudsterUniqueId || !amount || !reason) {
+                errorDiv.textContent = '모든 필드를 입력해주세요';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/submit-report', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        reporterUniqueId: parseInt(reporterUniqueId),
+                        reporterNickname,
+                        discordId,
+                        reportDate,
+                        fraudsterUniqueId: parseInt(fraudsterUniqueId),
+                        amount: parseInt(amount),
+                        reason
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.background = '#d4edda';
+                    errorDiv.style.color = '#155724';
+                    errorDiv.classList.remove('hidden');
+
+                    // 폼 초기화
+                    document.getElementById('reporterUniqueId').value = '';
+                    document.getElementById('reporterNickname').value = '';
+                    document.getElementById('discordId').value = '';
+                    document.getElementById('reportDate').value = '';
+                    document.getElementById('fraudsterUniqueId').value = '';
+                    document.getElementById('amount').value = '';
+                    document.getElementById('reason').value = '';
+                } else {
+                    errorDiv.textContent = data.message || '제출 실패';
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                errorDiv.textContent = '서버 오류가 발생했습니다';
                 errorDiv.classList.remove('hidden');
             }
         }

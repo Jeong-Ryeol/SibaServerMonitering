@@ -34,9 +34,42 @@ CREATE TABLE IF NOT EXISTS tip_reports (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 사이트 통계 테이블
+CREATE TABLE IF NOT EXISTS site_stats (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    online_users INT NOT NULL DEFAULT 400,
+    last_update_date DATE NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 대기 중인 제보 테이블 (승인 전)
+CREATE TABLE IF NOT EXISTS pending_reports (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    reporter_unique_id INT NOT NULL,
+    reporter_nickname VARCHAR(255) NOT NULL,
+    discord_id VARCHAR(255) NOT NULL,
+    report_date DATE NOT NULL,
+    fraudster_unique_id INT NOT NULL,
+    amount BIGINT NOT NULL,
+    reason TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_fraudster_id (fraudster_unique_id)
+);
+
+-- 공지사항 테이블
+CREATE TABLE IF NOT EXISTS announcements (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 기본 비밀번호 삽입 (초기 설정)
 INSERT INTO site_password (password) VALUES ('freedom2025');
 INSERT INTO admin_password (password) VALUES ('admin2025');
+
+-- 기본 통계 삽입 (초기 설정)
+INSERT INTO site_stats (online_users, last_update_date) VALUES (400, CURDATE());
 
 -- 테스트 데이터 (선택사항)
 INSERT INTO fraud_reports (report_date, unique_id, amount, reason) VALUES

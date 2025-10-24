@@ -75,12 +75,29 @@ app.get('/api/fraud-reports/:uniqueId', (req, res) => {
   );
 });
 
-// 통계 정보 조회 (온라인 유저, 활동자 수는 하드코딩)
+// 통계 정보 조회
 app.get('/api/stats', (req, res) => {
-  res.json({
-    onlineUsers: 400,
-    activeUsers: 500,
-    uptime: '24/7/365'
+  // 사이트 통계 조회
+  db.query('SELECT online_users, last_update_date FROM site_stats ORDER BY id DESC LIMIT 1', (err, statsResults) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+
+    // 사기꾼 수 조회
+    db.query('SELECT COUNT(DISTINCT unique_id) as fraudCount FROM fraud_reports', (err, fraudResults) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '서버 오류' });
+      }
+
+      const stats = statsResults[0] || { online_users: 400, last_update_date: new Date() };
+      const fraudCount = fraudResults[0].fraudCount;
+
+      res.json({
+        onlineUsers: stats.online_users,
+        fraudCount: fraudCount,
+        lastUpdate: stats.last_update_date
+      });
+    });
   });
 });
 
@@ -208,8 +225,152 @@ app.post('/api/admin/change-admin-password', requireAdmin, (req, res) => {
   });
 });
 
+// 통계 정보 업데이트
+app.post('/api/admin/update-stats', requireAdmin, (req, res) => {
+  const { onlineUsers, lastUpdateDate } = req.body;
+
+  db.query(
+    'INSERT INTO site_stats (id, online_users, last_update_date) VALUES (1, ?, ?) ON DUPLICATE KEY UPDATE online_users = ?, last_update_date = ?',
+    [onlineUsers, lastUpdateDate, onlineUsers, lastUpdateDate],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '변경 실패' });
+      }
+      res.json({ success: true, message: '통계가 업데이트되었습니다.' });
+    }
+  );
+});
+
+// 현재 통계 정보 조회 (관리자용)
+app.get('/api/admin/stats', requireAdmin, (req, res) => {
+  db.query('SELECT * FROM site_stats ORDER BY id DESC LIMIT 1', (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+    res.json({ success: true, data: results[0] || { online_users: 400, last_update_date: new Date() } });
+  });
+});
+
+// ==================== 제보 제출 API ====================
+
+// 사용자 제보 제출
+app.post('/api/submit-report', (req, res) => {
+  if (!req.session.siteAuthorized) {
+    return res.status(401).json({ success: false, message: '인증이 필요합니다.' });
+  }
+
+  const { reporterUniqueId, reporterNickname, discordId, reportDate, fraudsterUniqueId, amount, reason } = req.body;
+
+  db.query(
+    'INSERT INTO pending_reports (reporter_unique_id, reporter_nickname, discord_id, report_date, fraudster_unique_id, amount, reason) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [reporterUniqueId, reporterNickname, discordId, reportDate, fraudsterUniqueId, amount, reason],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '제보 제출 실패' });
+      }
+      res.json({ success: true, message: '제보가 제출되었습니다. 관리자 승인 후 등록됩니다.' });
+    }
+  );
+});
+
+// 대기 중인 제보 조회 (관리자용)
+app.get('/api/admin/pending-reports', requireAdmin, (req, res) => {
+  db.query('SELECT * FROM pending_reports ORDER BY created_at DESC', (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+    res.json({ success: true, data: results });
+  });
+});
+
+// 제보 승인 (관리자용)
+app.post('/api/admin/approve-report/:id', requireAdmin, (req, res) => {
+  const id = parseInt(req.params.id);
+
+  // 대기 중인 제보 조회
+  db.query('SELECT * FROM pending_reports WHERE id = ?', [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ success: false, message: '제보를 찾을 수 없습니다' });
+    }
+
+    const report = results[0];
+
+    // fraud_reports 테이블에 추가
+    db.query(
+      'INSERT INTO fraud_reports (report_date, unique_id, amount, reason) VALUES (?, ?, ?, ?)',
+      [report.report_date, report.fraudster_unique_id, report.amount, report.reason],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ success: false, message: '승인 실패' });
+        }
+
+        // pending_reports에서 삭제
+        db.query('DELETE FROM pending_reports WHERE id = ?', [id], (err, result) => {
+          if (err) {
+            return res.status(500).json({ success: false, message: '삭제 실패' });
+          }
+          res.json({ success: true, message: '제보가 승인되었습니다.' });
+        });
+      }
+    );
+  });
+});
+
+// 제보 거부 (관리자용)
+app.delete('/api/admin/reject-report/:id', requireAdmin, (req, res) => {
+  const id = parseInt(req.params.id);
+
+  db.query('DELETE FROM pending_reports WHERE id = ?', [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '거부 실패' });
+    }
+    res.json({ success: true, message: '제보가 거부되었습니다.' });
+  });
+});
+
+// ==================== 공지사항 API ====================
+
+// 공지사항 조회 (사용자용)
+app.get('/api/announcements', (req, res) => {
+  db.query('SELECT * FROM announcements ORDER BY created_at DESC LIMIT 10', (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+    res.json({ success: true, data: results });
+  });
+});
+
+// 공지사항 등록 (관리자용)
+app.post('/api/admin/announcements', requireAdmin, (req, res) => {
+  const { title, content } = req.body;
+
+  db.query('INSERT INTO announcements (title, content) VALUES (?, ?)', [title, content], (err, result) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '등록 실패' });
+    }
+    res.json({ success: true, message: '공지사항이 등록되었습니다.' });
+  });
+});
+
+// 공지사항 삭제 (관리자용)
+app.delete('/api/admin/announcements/:id', requireAdmin, (req, res) => {
+  const id = parseInt(req.params.id);
+
+  db.query('DELETE FROM announcements WHERE id = ?', [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '삭제 실패' });
+    }
+    res.json({ success: true, message: '삭제되었습니다.' });
+  });
+});
+
 // 서버 시작
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`FIVEN:FREEDOM 서버가 포트 ${PORT}에서 실행 중입니다.`);
-  console.log(`접속 주소: http://168.107.28.244`);
+  console.log(`로컬 접속 주소: http://localhost:${PORT}`);
+  console.log(`외부 접속 주소: http://168.107.28.244:${PORT}`);
 });
