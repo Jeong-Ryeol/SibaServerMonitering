@@ -765,10 +765,16 @@
         }
 
         // 자동 갱신 (10초마다)
+        let lastSearchedId = null; // 마지막 조회한 고유번호
+
         function startAutoRefresh() {
             setInterval(() => {
                 loadStats();
                 loadAnnouncements();
+                // 마지막 조회한 ID가 있으면 자동으로 다시 조회
+                if (lastSearchedId !== null) {
+                    searchFraudReports(lastSearchedId);
+                }
             }, 10000); // 10초
         }
 
@@ -805,8 +811,8 @@
         }
 
         // 사기 신고 검색
-        async function searchFraudReports() {
-            const uniqueId = document.getElementById('uniqueIdInput').value;
+        async function searchFraudReports(searchId = null) {
+            const uniqueId = searchId || document.getElementById('uniqueIdInput').value;
             const resultsDiv = document.getElementById('results');
             const errorDiv = document.getElementById('searchError');
 
@@ -818,6 +824,9 @@
                 errorDiv.classList.remove('hidden');
                 return;
             }
+
+            // 마지막 조회 ID 저장
+            lastSearchedId = uniqueId;
 
             try {
                 const response = await fetch(`/api/fraud-reports/${uniqueId}`);
