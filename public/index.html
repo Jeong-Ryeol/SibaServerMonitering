@@ -735,6 +735,7 @@
                     document.getElementById('mainScreen').classList.add('active');
                     loadStats();
                     loadAnnouncements();
+                    startAutoRefresh(); // 자동 갱신 시작
                 } else {
                     errorDiv.textContent = data.message || '비밀번호가 올바르지 않습니다';
                     errorDiv.classList.remove('hidden');
@@ -756,10 +757,19 @@
                     document.getElementById('mainScreen').classList.add('active');
                     loadStats();
                     loadAnnouncements();
+                    startAutoRefresh(); // 자동 갱신 시작
                 }
             } catch (error) {
                 console.error('세션 확인 실패:', error);
             }
+        }
+
+        // 자동 갱신 (10초마다)
+        function startAutoRefresh() {
+            setInterval(() => {
+                loadStats();
+                loadAnnouncements();
+            }, 10000); // 10초
         }
 
         // 엔터키로 비밀번호 입력
