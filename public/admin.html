@@ -518,11 +518,11 @@
                     <div class="form-group">
                         <label>신고 날짜</label>
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="number" id="fraudYear" placeholder="2025" min="2000" max="2099" style="width: 100px;" oninput="autoFocusYear(this)" />
+                            <input type="number" id="fraudYear" placeholder="2025" min="2000" max="2099" style="width: 100px;" />
                             <span>년</span>
-                            <input type="number" id="fraudMonth" placeholder="01" min="1" max="12" maxlength="2" style="width: 70px;" oninput="autoFocusMonth(this)" />
+                            <input type="number" id="fraudMonth" placeholder="01" min="1" max="12" style="width: 70px;" />
                             <span>월</span>
-                            <input type="number" id="fraudDay" placeholder="01" min="1" max="31" maxlength="2" style="width: 70px;" oninput="limitDayInput(this)" />
+                            <input type="number" id="fraudDay" placeholder="01" min="1" max="31" style="width: 70px;" />
                             <span>일</span>
                         </div>
                     </div>
@@ -853,32 +853,6 @@
         }
 
         // 사기 신고 추가
-        // 연도 4자리 입력 시 자동으로 월로 포커스 이동
-        function autoFocusYear(input) {
-            if (input.value.length === 4) {
-                document.getElementById('fraudMonth').focus();
-            }
-        }
-
-        // 월 2자리 입력 시 자동으로 일로 포커스 이동
-        function autoFocusMonth(input) {
-            // 2자리 초과하면 자르기
-            if (input.value.length > 2) {
-                input.value = input.value.slice(0, 2);
-            }
-            // 정확히 2자리일 때만 다음 필드로 이동
-            if (input.value.length === 2) {
-                document.getElementById('fraudDay').focus();
-            }
-        }
-
-        // 일 2자리 제한
-        function limitDayInput(input) {
-            if (input.value.length > 2) {
-                input.value = input.value.slice(0, 2);
-            }
-        }
-
         async function addFraudReport() {
             const messageDiv = document.getElementById('fraudMessage');
             const year = document.getElementById('fraudYear').value;
