@@ -953,22 +953,22 @@
 
                         <!-- 2줄: 가해자 → 피해자 -->
                         <div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, #fff5f5, #ffe5e5); border-radius: 10px; border: 2px solid #ff6b6b; animation: attackerPulse 2s ease-in-out infinite;">
-                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; align-items: center;">
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; align-items: start;">
                                 <div>
-                                    <div style="font-size: 0.85em; color: #ff3838; font-weight: 600; margin-bottom: 5px;">⚠️ 가해자 번호</div>
-                                    <div style="font-size: 1.3em; font-weight: 900; color: #ff1744;">${report.attacker_id || '-'}</div>
+                                    <div style="font-size: 0.85em; color: #ff3838; font-weight: 600; margin-bottom: 5px; line-height: 1.2;">⚠️ 가해자 번호</div>
+                                    <div style="font-size: 1.3em; font-weight: 900; color: #ff1744; line-height: 1.2;">${report.attacker_id || '-'}</div>
                                 </div>
                                 <div>
-                                    <div style="font-size: 0.85em; color: #ff3838; font-weight: 600; margin-bottom: 5px;">⚠️ 가해자 닉네임</div>
-                                    <div style="font-size: 1.3em; font-weight: 900; color: #ff1744;">${report.attacker_nickname || '-'}</div>
+                                    <div style="font-size: 0.85em; color: #ff3838; font-weight: 600; margin-bottom: 5px; line-height: 1.2;">⚠️ 가해자 닉네임</div>
+                                    <div style="font-size: 1.3em; font-weight: 900; color: #ff1744; line-height: 1.2;">${report.attacker_nickname || '-'}</div>
                                 </div>
                                 <div>
-                                    <div style="font-size: 0.85em; color: #666; font-weight: 500; margin-bottom: 5px;">👤 피해자 번호</div>
-                                    <div style="font-size: 1.1em; font-weight: 700; color: #333;">${report.victim_id || '-'}</div>
+                                    <div style="font-size: 0.85em; color: #666; font-weight: 500; margin-bottom: 5px; line-height: 1.2;">👤 피해자 번호</div>
+                                    <div style="font-size: 1.3em; font-weight: 700; color: #333; line-height: 1.2;">${report.victim_id || '-'}</div>
                                 </div>
                                 <div>
-                                    <div style="font-size: 0.85em; color: #666; font-weight: 500; margin-bottom: 5px;">👤 피해자 닉네임</div>
-                                    <div style="font-size: 1.1em; font-weight: 700; color: #333;">${report.victim_nickname || '-'}</div>
+                                    <div style="font-size: 0.85em; color: #666; font-weight: 500; margin-bottom: 5px; line-height: 1.2;">👤 피해자 닉네임</div>
+                                    <div style="font-size: 1.3em; font-weight: 700; color: #333; line-height: 1.2;">${report.victim_nickname || '-'}</div>
                                 </div>
                             </div>
                         </div>
