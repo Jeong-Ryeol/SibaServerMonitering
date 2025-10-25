@@ -69,10 +69,12 @@ CREATE TABLE admin_password (
   password VARCHAR(255) NOT NULL
 );
 
--- 기본 데이터 삽입
+-- 기본 데이터 삽입 (비밀번호는 bcrypt 해시로 저장)
+-- 사이트 비밀번호: freedom2025 (해시)
+-- 관리자 비밀번호: admin2025 (해시)
 INSERT INTO site_stats (id, online_users, last_update_date) VALUES (1, 400, CURDATE());
-INSERT INTO site_password (id, password) VALUES (1, 'freedom2025');
-INSERT INTO admin_password (id, password) VALUES (1, 'admin2025');
+INSERT INTO site_password (id, password) VALUES (1, '$2b$10$QbeQYM3fZelfA59PgIj82e9LiMz.0BRetcWvhoS.RuQIAQxfAfkMi');
+INSERT INTO admin_password (id, password) VALUES (1, '$2b$10$IJlAg5UsEt.HlVgeCpc3iONDB4o4NPjI.mm99jlwwpWaScSn0D4q6');
 
 -- 샘플 공지사항 삽입
 INSERT INTO announcements (title, content) VALUES

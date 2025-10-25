@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const app = express();
@@ -87,19 +88,28 @@ app.get('/api/check-session', (req, res) => {
 });
 
 // 사이트 비밀번호 확인
-app.post('/api/verify-site-password', (req, res) => {
+app.post('/api/verify-site-password', async (req, res) => {
   const { password } = req.body;
 
-  db.query('SELECT password FROM site_password ORDER BY id DESC LIMIT 1', (err, results) => {
+  db.query('SELECT password FROM site_password ORDER BY id DESC LIMIT 1', async (err, results) => {
     if (err) {
       return res.status(500).json({ success: false, message: '서버 오류' });
     }
 
-    if (results.length > 0 && results[0].password === password) {
-      req.session.siteAuthorized = true;
-      res.json({ success: true });
+    if (results.length > 0) {
+      try {
+        const isMatch = await bcrypt.compare(password, results[0].password);
+        if (isMatch) {
+          req.session.siteAuthorized = true;
+          res.json({ success: true });
+        } else {
+          res.json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
+        }
+      } catch (error) {
+        return res.status(500).json({ success: false, message: '비밀번호 확인 오류' });
+      }
     } else {
-      res.json({ success: false, message: '비밀번호가 올바르지 않습니다.' });
+      res.json({ success: false, message: '비밀번호가 설정되지 않았습니다.' });
     }
   });
 });
@@ -158,20 +168,29 @@ app.get('/api/admin/check-session', (req, res) => {
 });
 
 // 관리자 비밀번호 확인
-app.post('/api/admin/verify-password', (req, res) => {
+app.post('/api/admin/verify-password', async (req, res) => {
   const { password } = req.body;
 
-  db.query('SELECT password FROM admin_password ORDER BY id DESC LIMIT 1', (err, results) => {
+  db.query('SELECT password FROM admin_password ORDER BY id DESC LIMIT 1', async (err, results) => {
     if (err) {
       return res.status(500).json({ success: false, message: '서버 오류' });
     }
 
-    if (results.length > 0 && results[0].password === password) {
-      req.session.adminAuthorized = true;
-      activeAdminSessions.set(req.sessionID, Date.now());
-      res.json({ success: true });
+    if (results.length > 0) {
+      try {
+        const isMatch = await bcrypt.compare(password, results[0].password);
+        if (isMatch) {
+          req.session.adminAuthorized = true;
+          activeAdminSessions.set(req.sessionID, Date.now());
+          res.json({ success: true });
+        } else {
+          res.json({ success: false, message: '관리자 비밀번호가 올바르지 않습니다.' });
+        }
+      } catch (error) {
+        return res.status(500).json({ success: false, message: '비밀번호 확인 오류' });
+      }
     } else {
-      res.json({ success: false, message: '관리자 비밀번호가 올바르지 않습니다.' });
+      res.json({ success: false, message: '비밀번호가 설정되지 않았습니다.' });
     }
   });
 });
@@ -277,27 +296,37 @@ app.delete('/api/admin/tip-reports/:id', requireAdmin, (req, res) => {
 });
 
 // 사이트 비밀번호 변경
-app.post('/api/admin/change-site-password', requireAdmin, (req, res) => {
+app.post('/api/admin/change-site-password', requireAdmin, async (req, res) => {
   const { newPassword } = req.body;
 
-  db.query('UPDATE site_password SET password = ? WHERE id = 1', [newPassword], (err, result) => {
-    if (err) {
-      return res.status(500).json({ success: false, message: '변경 실패' });
-    }
-    res.json({ success: true, message: '사이트 비밀번호가 변경되었습니다.' });
-  });
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    db.query('UPDATE site_password SET password = ? WHERE id = 1', [hashedPassword], (err, result) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '변경 실패' });
+      }
+      res.json({ success: true, message: '사이트 비밀번호가 변경되었습니다.' });
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: '비밀번호 해싱 오류' });
+  }
 });
 
 // 관리자 비밀번호 변경
-app.post('/api/admin/change-admin-password', requireAdmin, (req, res) => {
+app.post('/api/admin/change-admin-password', requireAdmin, async (req, res) => {
   const { newPassword } = req.body;
 
-  db.query('UPDATE admin_password SET password = ? WHERE id = 1', [newPassword], (err, result) => {
-    if (err) {
-      return res.status(500).json({ success: false, message: '변경 실패' });
-    }
-    res.json({ success: true, message: '관리자 비밀번호가 변경되었습니다.' });
-  });
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    db.query('UPDATE admin_password SET password = ? WHERE id = 1', [hashedPassword], (err, result) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '변경 실패' });
+      }
+      res.json({ success: true, message: '관리자 비밀번호가 변경되었습니다.' });
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: '비밀번호 해싱 오류' });
+  }
 });
 
 // 통계 정보 업데이트
