@@ -518,9 +518,9 @@
                     <div class="form-group">
                         <label>신고 날짜</label>
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="text" id="fraudYear" placeholder="2025" maxlength="4" style="width: 100px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                            <input type="text" id="fraudYear" placeholder="2025" maxlength="4" style="width: 100px;" oninput="this.value = this.value.replace(/[^0-9]/g, ''); autoFocusYear(this)" />
                             <span>년</span>
-                            <input type="text" id="fraudMonth" placeholder="01" maxlength="2" style="width: 70px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                            <input type="text" id="fraudMonth" placeholder="01" maxlength="2" style="width: 70px;" oninput="this.value = this.value.replace(/[^0-9]/g, ''); autoFocusMonth(this)" />
                             <span>월</span>
                             <input type="text" id="fraudDay" placeholder="01" maxlength="2" style="width: 70px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                             <span>일</span>
@@ -850,6 +850,20 @@
             setTimeout(() => {
                 element.className = 'message';
             }, 5000);
+        }
+
+        // 연도 4자리 입력 시 자동으로 월로 포커스 이동
+        function autoFocusYear(input) {
+            if (input.value.length === 4) {
+                document.getElementById('fraudMonth').focus();
+            }
+        }
+
+        // 월 2자리 입력 시 자동으로 일로 포커스 이동
+        function autoFocusMonth(input) {
+            if (input.value.length === 2) {
+                document.getElementById('fraudDay').focus();
+            }
         }
 
         // 사기 신고 추가
