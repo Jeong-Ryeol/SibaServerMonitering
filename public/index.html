@@ -694,6 +694,142 @@
             display: none !important;
         }
 
+        /* 광고 카드 스타일 */
+        .ads-container {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 320px;
+            z-index: 100;
+            display: none;
+        }
+
+        @media (min-width: 1400px) {
+            .ads-container {
+                display: block;
+            }
+
+            body {
+                position: relative;
+            }
+        }
+
+        .ad-header-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border: 3px solid #ffd700;
+            margin-bottom: 15px;
+            text-align: center;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .ad-header-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .ad-header-subtitle {
+            font-size: 1.3em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ad-status-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 147, 251, 0.2));
+            backdrop-filter: blur(15px);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+            text-align: center;
+            animation: fadeInUp 0.6s ease-out 0.1s;
+            animation-fill-mode: both;
+        }
+
+        .ad-status-text {
+            font-size: 1.1em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ad-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease-out;
+            transition: all 0.4s;
+        }
+
+        .ad-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.5);
+        }
+
+        .ad-title {
+            font-size: 1.4em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .ad-content {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .ad-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        .ad-timer-icon {
+            font-size: 1.2em;
+        }
+
+        .ad-timer-text {
+            flex: 1;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* 이스터에그 스타일 - 개발자/관리자 (성능 최적화) */
         .easter-egg-container {
             text-align: center;
@@ -822,6 +958,21 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TTKKMTCT"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+
+    <!-- 광고 컨테이너 (오른쪽 고정) -->
+    <div class="ads-container" id="adsContainer">
+        <!-- 고정 헤더 카드 -->
+        <div class="ad-header-card">
+            <div class="ad-header-title">파트너쉽</div>
+            <div class="ad-header-title">무장 담보대출</div>
+            <div class="ad-header-subtitle">문의 : 무장 (100)</div>
+        </div>
+        <div class="ad-status-card">
+            <div class="ad-status-text">광고 ㅇㅇ중</div>
+        </div>
+        <!-- 동적 광고들이 여기에 추가됨 -->
+    </div>
+
     <div class="container">
         <!-- 비밀번호 입력 화면 -->
         <div class="password-screen" id="passwordScreen">
@@ -1336,6 +1487,105 @@
                 errorDiv.classList.remove('hidden');
             }
         }
+
+        // 광고 로드
+        async function loadAdvertisements() {
+            try {
+                const response = await fetch('/api/advertisements');
+                const data = await response.json();
+
+                const container = document.getElementById('adsContainer');
+
+                // 기존 동적 광고만 제거 (고정 헤더 카드는 유지)
+                const dynamicAds = container.querySelectorAll('.ad-card');
+                dynamicAds.forEach(ad => ad.remove());
+
+                if (data.success && data.data.length > 0) {
+                    data.data.forEach(ad => {
+                        const card = document.createElement('div');
+                        card.className = 'ad-card';
+                        card.setAttribute('data-ad-id', ad.id);
+                        card.setAttribute('data-expires-at', ad.expires_at);
+
+                        card.innerHTML = `
+                            <div class="ad-title">${ad.title}</div>
+                            <div class="ad-content">${ad.content}</div>
+                            <div class="ad-timer">
+                                <span class="ad-timer-icon">⏰</span>
+                                <span class="ad-timer-text" id="timer-${ad.id}">계산 중...</span>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                    // 타이머 시작
+                    startAdTimers();
+                }
+            } catch (error) {
+                console.error('광고 로드 실패:', error);
+            }
+        }
+
+        // 광고 타이머 시작
+        function startAdTimers() {
+            const updateTimers = () => {
+                const cards = document.querySelectorAll('.ad-card');
+                const now = new Date();
+
+                cards.forEach(card => {
+                    const adId = card.getAttribute('data-ad-id');
+                    const expiresAt = new Date(card.getAttribute('data-expires-at'));
+                    const timerElement = document.getElementById(`timer-${adId}`);
+
+                    const timeLeft = expiresAt - now;
+
+                    if (timeLeft > 0) {
+                        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                        let timeText = '';
+                        if (days > 0) {
+                            timeText = `${days}일 ${hours}시간 ${minutes}분`;
+                        } else if (hours > 0) {
+                            timeText = `${hours}시간 ${minutes}분 ${seconds}초`;
+                        } else if (minutes > 0) {
+                            timeText = `${minutes}분 ${seconds}초`;
+                        } else {
+                            timeText = `${seconds}초`;
+                        }
+
+                        timerElement.textContent = `남은 시간: ${timeText}`;
+                    } else {
+                        // 만료됨 - 카드 제거
+                        card.remove();
+                    }
+                });
+
+                // 모든 광고가 만료되었으면 다시 로드
+                if (cards.length === 0 || document.querySelectorAll('.ad-card').length === 0) {
+                    loadAdvertisements();
+                }
+            };
+
+            // 1초마다 업데이트
+            updateTimers();
+            setInterval(updateTimers, 1000);
+        }
+
+        // 광고 자동 새로고침 (1분마다)
+        function startAdAutoRefresh() {
+            setInterval(() => {
+                loadAdvertisements();
+            }, 60000); // 1분
+        }
+
+        // 페이지 로드 시 광고 로드
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdvertisements();
+            startAdAutoRefresh();
+        });
     </script>
 </body>
 </html>

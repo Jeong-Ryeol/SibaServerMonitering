@@ -568,6 +568,62 @@ app.delete('/api/admin/announcements/:id', requireAdmin, (req, res) => {
   });
 });
 
+// ==================== 광고 API ====================
+
+// 활성 광고 조회 (사용자용 - 만료되지 않은 것만)
+app.get('/api/advertisements', (req, res) => {
+  db.query('SELECT * FROM advertisements WHERE expires_at > NOW() ORDER BY created_at DESC', (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+    res.json({ success: true, data: results });
+  });
+});
+
+// 광고 등록 (관리자용)
+app.post('/api/admin/advertisements', requireAdmin, (req, res) => {
+  const { title, content, hours } = req.body;
+
+  if (!title || !content || !hours) {
+    return res.status(400).json({ success: false, message: '모든 필드를 입력하세요' });
+  }
+
+  // 현재 시간 + hours 만큼 더해서 만료 시간 계산
+  db.query(
+    'INSERT INTO advertisements (title, content, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL ? HOUR))',
+    [title, content, parseInt(hours)],
+    (err, result) => {
+      if (err) {
+        console.error('광고 등록 오류:', err);
+        return res.status(500).json({ success: false, message: '등록 실패' });
+      }
+      res.json({ success: true, message: '광고가 등록되었습니다.' });
+    }
+  );
+});
+
+// 모든 광고 조회 (관리자용)
+app.get('/api/admin/advertisements', requireAdmin, (req, res) => {
+  db.query('SELECT * FROM advertisements ORDER BY created_at DESC', (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+    res.json({ success: true, data: results });
+  });
+});
+
+// 광고 삭제 (관리자용)
+app.delete('/api/admin/advertisements/:id', requireAdmin, (req, res) => {
+  const id = parseInt(req.params.id);
+
+  db.query('DELETE FROM advertisements WHERE id = ?', [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '삭제 실패' });
+    }
+    res.json({ success: true, message: '광고가 삭제되었습니다.' });
+  });
+});
+
 // 서버 시작
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`FIVEN:FREEDOM 서버가 포트 ${PORT}에서 실행 중입니다.`);

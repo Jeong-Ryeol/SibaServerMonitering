@@ -527,6 +527,7 @@
                 <button class="tab active" onclick="switchTab('fraud')">사기 신고</button>
                 <button class="tab" onclick="switchTab('pending')">대기 제보</button>
                 <button class="tab" onclick="switchTab('announcements')">공지사항</button>
+                <button class="tab" onclick="switchTab('advertisements')">광고</button>
                 <button class="tab" onclick="switchTab('settings')">설정</button>
             </div>
 
@@ -682,6 +683,47 @@
                             </tr>
                         </thead>
                         <tbody id="announcementsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 광고 관리 -->
+            <div class="tab-content" id="advertisementsTab">
+                <div class="card">
+                    <h2>새 광고 등록</h2>
+                    <div id="advertisementMessage" class="message"></div>
+                    <div class="form-group">
+                        <label>제목</label>
+                        <input type="text" id="advertisementTitle" placeholder="광고 제목" />
+                    </div>
+                    <div class="form-group">
+                        <label>내용</label>
+                        <textarea id="advertisementContent" placeholder="광고 내용을 입력하세요..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>표시 시간 (시간 단위)</label>
+                        <input type="number" id="advertisementHours" placeholder="24" min="1" />
+                        <small style="color: #666; display: block; margin-top: 5px;">예: 24시간, 48시간 등</small>
+                    </div>
+                    <button class="btn btn-primary" onclick="addAdvertisement()">등록</button>
+                </div>
+
+                <div class="card">
+                    <h2>전체 광고 목록</h2>
+                    <button class="btn btn-primary" onclick="loadAdvertisements()">새로고침</button>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>제목</th>
+                                <th>내용</th>
+                                <th>만료 시간</th>
+                                <th>남은 시간</th>
+                                <th>등록 시간</th>
+                                <th>작업</th>
+                            </tr>
+                        </thead>
+                        <tbody id="advertisementsTable"></tbody>
                     </table>
                 </div>
             </div>
@@ -959,6 +1001,7 @@
             if (tab === 'fraud') loadFraudReports();
             if (tab === 'pending') loadPendingReports();
             if (tab === 'announcements') loadAnnouncements();
+            if (tab === 'advertisements') loadAdvertisements();
             if (tab === 'settings') loadCurrentStats();
         }
 
@@ -1334,6 +1377,106 @@
 
                 if (data.success) {
                     loadAnnouncements();
+                } else {
+                    alert(data.message || '삭제 실패');
+                }
+            } catch (error) {
+                alert('서버 오류가 발생했습니다');
+            }
+        }
+
+        // 광고 목록 로드
+        async function loadAdvertisements() {
+            try {
+                const response = await fetch('/api/admin/advertisements');
+                const data = await response.json();
+
+                const tbody = document.getElementById('advertisementsTable');
+                tbody.innerHTML = '';
+
+                if (data.success && data.data.length > 0) {
+                    data.data.forEach(ad => {
+                        const tr = document.createElement('tr');
+                        const expiresAt = new Date(ad.expires_at);
+                        const now = new Date();
+                        const timeLeft = expiresAt - now;
+
+                        let timeLeftText = '';
+                        if (timeLeft > 0) {
+                            const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+                            const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                            timeLeftText = `${hoursLeft}시간 ${minutesLeft}분`;
+                        } else {
+                            timeLeftText = '<span style="color: #dc3545; font-weight: bold;">만료됨</span>';
+                        }
+
+                        tr.innerHTML = `
+                            <td>${ad.id}</td>
+                            <td>${ad.title}</td>
+                            <td>${ad.content.substring(0, 50)}${ad.content.length > 50 ? '...' : ''}</td>
+                            <td>${new Date(ad.expires_at).toLocaleString('ko-KR')}</td>
+                            <td>${timeLeftText}</td>
+                            <td>${new Date(ad.created_at).toLocaleString('ko-KR')}</td>
+                            <td><button class="btn btn-danger" onclick="deleteAdvertisement(${ad.id})">삭제</button></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">등록된 광고가 없습니다</td></tr>';
+                }
+            } catch (error) {
+                console.error('Failed to load advertisements:', error);
+            }
+        }
+
+        // 광고 추가
+        async function addAdvertisement() {
+            const messageDiv = document.getElementById('advertisementMessage');
+            const title = document.getElementById('advertisementTitle').value;
+            const content = document.getElementById('advertisementContent').value;
+            const hours = document.getElementById('advertisementHours').value;
+
+            if (!title || !content || !hours) {
+                showMessage(messageDiv, '모든 필드를 입력하세요', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/advertisements', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content, hours: parseInt(hours) })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(messageDiv, data.message, 'success');
+                    document.getElementById('advertisementTitle').value = '';
+                    document.getElementById('advertisementContent').value = '';
+                    document.getElementById('advertisementHours').value = '';
+                    loadAdvertisements();
+                } else {
+                    showMessage(messageDiv, data.message || '등록 실패', 'error');
+                }
+            } catch (error) {
+                showMessage(messageDiv, '서버 오류가 발생했습니다', 'error');
+            }
+        }
+
+        // 광고 삭제
+        async function deleteAdvertisement(id) {
+            if (!confirm('이 광고를 삭제하시겠습니까?')) return;
+
+            try {
+                const response = await fetch(`/api/admin/advertisements/${id}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadAdvertisements();
                 } else {
                     alert(data.message || '삭제 실패');
                 }
