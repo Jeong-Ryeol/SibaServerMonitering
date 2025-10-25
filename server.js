@@ -24,6 +24,14 @@ db.connect((err) => {
   }
 });
 
+// 자정까지 남은 시간 계산 (밀리초)
+function getMillisecondsUntilMidnight() {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0); // 다음날 00:00:00
+  return midnight - now;
+}
+
 // 미들웨어
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,7 +41,9 @@ const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24시간
+  cookie: {
+    maxAge: getMillisecondsUntilMidnight() // 자정까지
+  }
 });
 
 app.use(sessionMiddleware);
@@ -44,6 +54,12 @@ const activeAdminSessions = new Map();
 
 // 세션 활동 업데이트 미들웨어
 app.use((req, res, next) => {
+  // 세션 쿠키 만료 시간을 자정까지로 재설정
+  if (req.session) {
+    req.session.cookie.maxAge = getMillisecondsUntilMidnight();
+  }
+
+  // 관리자 세션 추적
   if (req.session && req.session.adminAuthorized) {
     activeAdminSessions.set(req.sessionID, Date.now());
   }
