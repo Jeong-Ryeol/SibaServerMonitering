@@ -527,8 +527,20 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>고유번호</label>
-                        <input type="number" id="fraudUniqueId" placeholder="2200" />
+                        <label>피해자 고유번호</label>
+                        <input type="number" id="victimId" placeholder="예: 1234" />
+                    </div>
+                    <div class="form-group">
+                        <label>피해자 닉네임</label>
+                        <input type="text" id="victimNickname" placeholder="예: 홍길동" />
+                    </div>
+                    <div class="form-group">
+                        <label>가해자 고유번호</label>
+                        <input type="number" id="attackerId" placeholder="예: 5678" />
+                    </div>
+                    <div class="form-group">
+                        <label>가해자 닉네임</label>
+                        <input type="text" id="attackerNickname" placeholder="예: 사기꾼" />
                     </div>
                     <div class="form-group">
                         <label>금액/아이템 타입</label>
@@ -948,7 +960,10 @@
             const year = document.getElementById('fraudYear').value;
             const month = document.getElementById('fraudMonth').value;
             const day = document.getElementById('fraudDay').value;
-            const uniqueId = document.getElementById('fraudUniqueId').value;
+            const victimId = document.getElementById('victimId').value;
+            const victimNickname = document.getElementById('victimNickname').value;
+            const attackerId = document.getElementById('attackerId').value;
+            const attackerNickname = document.getElementById('attackerNickname').value;
             const amountType = document.querySelector('input[name="amountType"]:checked').value;
             let amount;
 
@@ -968,7 +983,7 @@
 
             const reason = document.getElementById('fraudReason').value;
 
-            if (!year || !month || !day || !uniqueId || !amount || !reason) {
+            if (!year || !month || !day || !victimId || !victimNickname || !attackerId || !attackerNickname || !amount || !reason) {
                 showMessage(messageDiv, 'Please fill in all fields', 'error');
                 return;
             }
@@ -982,7 +997,10 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         reportDate,
-                        uniqueId: parseInt(uniqueId),
+                        victimId: parseInt(victimId),
+                        victimNickname,
+                        attackerId: parseInt(attackerId),
+                        attackerNickname,
                         amount: amountType === 'money' ? parseInt(amount) : amount,
                         amountType,
                         reason
@@ -996,7 +1014,10 @@
                     document.getElementById('fraudYear').value = '';
                     document.getElementById('fraudMonth').value = '';
                     document.getElementById('fraudDay').value = '';
-                    document.getElementById('fraudUniqueId').value = '';
+                    document.getElementById('victimId').value = '';
+                    document.getElementById('victimNickname').value = '';
+                    document.getElementById('attackerId').value = '';
+                    document.getElementById('attackerNickname').value = '';
                     document.getElementById('fraudAmount').value = '';
                     document.getElementById('fraudItem').value = '';
                     document.getElementById('fraudAmountBoth').value = '';

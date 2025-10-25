@@ -933,12 +933,24 @@
                         <h3>사건번호 #${report.id}</h3>
                         <div class="result-detail">
                             <div class="result-detail-item">
-                                <div class="result-detail-label">날짜</div>
-                                <div class="result-detail-value">${new Date(report.report_date).toLocaleDateString('ko-KR')}</div>
+                                <div class="result-detail-label">피해자 고유번호</div>
+                                <div class="result-detail-value">${report.victim_id || '-'}</div>
                             </div>
                             <div class="result-detail-item">
-                                <div class="result-detail-label">고유번호</div>
-                                <div class="result-detail-value">${report.unique_id}</div>
+                                <div class="result-detail-label">피해자 닉네임</div>
+                                <div class="result-detail-value">${report.victim_nickname || '-'}</div>
+                            </div>
+                            <div class="result-detail-item">
+                                <div class="result-detail-label">가해자 고유번호</div>
+                                <div class="result-detail-value">${report.attacker_id || '-'}</div>
+                            </div>
+                            <div class="result-detail-item">
+                                <div class="result-detail-label">가해자 닉네임</div>
+                                <div class="result-detail-value">${report.attacker_nickname || '-'}</div>
+                            </div>
+                            <div class="result-detail-item">
+                                <div class="result-detail-label">날짜</div>
+                                <div class="result-detail-value">${new Date(report.report_date).toLocaleDateString('ko-KR')}</div>
                             </div>
                             <div class="result-detail-item">
                                 <div class="result-detail-label">${report.amount_type === 'item' ? '아이템' : report.amount_type === 'both' ? '금액/아이템' : '금액'}</div>

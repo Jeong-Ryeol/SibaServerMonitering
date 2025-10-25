@@ -205,13 +205,14 @@ const requireAdmin = (req, res, next) => {
 
 // 사기 신고 등록
 app.post('/api/admin/fraud-reports', requireAdmin, (req, res) => {
-  const { reportDate, uniqueId, amount, amountType, reason } = req.body;
+  const { reportDate, victimId, victimNickname, attackerId, attackerNickname, amount, amountType, reason } = req.body;
 
   db.query(
-    'INSERT INTO fraud_reports (report_date, unique_id, amount, amount_type, reason) VALUES (?, ?, ?, ?, ?)',
-    [reportDate, uniqueId, amount, amountType || 'money', reason],
+    'INSERT INTO fraud_reports (report_date, unique_id, victim_id, victim_nickname, attacker_id, attacker_nickname, amount, amount_type, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [reportDate, victimId, victimId, victimNickname, attackerId, attackerNickname, amount, amountType || 'money', reason],
     (err, result) => {
       if (err) {
+        console.error('DB Error:', err);
         return res.status(500).json({ success: false, message: '등록 실패' });
       }
       res.json({ success: true, message: '사기 신고가 등록되었습니다.' });
