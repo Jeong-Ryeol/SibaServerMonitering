@@ -570,6 +570,47 @@ app.delete('/api/admin/announcements/:id', requireAdmin, (req, res) => {
 
 // ==================== 광고 API ====================
 
+// 광고 헤더 설정 조회 (사용자용)
+app.get('/api/ad-header', (req, res) => {
+  db.query('SELECT * FROM ad_header_settings ORDER BY id DESC LIMIT 1', (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+    res.json({ success: true, data: results[0] || { line1: '📋 파트너쉽 📋', line2: '무장 담보대출', line3: '문의 : 무장 (100)' } });
+  });
+});
+
+// 광고 헤더 설정 업데이트 (관리자용)
+app.post('/api/admin/ad-header', requireAdmin, (req, res) => {
+  const { line1, line2, line3 } = req.body;
+
+  if (!line1 || !line2 || !line3) {
+    return res.status(400).json({ success: false, message: '모든 줄을 입력하세요' });
+  }
+
+  db.query(
+    'INSERT INTO ad_header_settings (id, line1, line2, line3) VALUES (1, ?, ?, ?) ON DUPLICATE KEY UPDATE line1 = ?, line2 = ?, line3 = ?',
+    [line1, line2, line3, line1, line2, line3],
+    (err, result) => {
+      if (err) {
+        console.error('광고 헤더 업데이트 오류:', err);
+        return res.status(500).json({ success: false, message: '업데이트 실패' });
+      }
+      res.json({ success: true, message: '광고 헤더가 업데이트되었습니다.' });
+    }
+  );
+});
+
+// 광고 헤더 설정 조회 (관리자용)
+app.get('/api/admin/ad-header', requireAdmin, (req, res) => {
+  db.query('SELECT * FROM ad_header_settings ORDER BY id DESC LIMIT 1', (err, results) => {
+    if (err) {
+      return res.status(500).json({ success: false, message: '서버 오류' });
+    }
+    res.json({ success: true, data: results[0] || { line1: '📋 파트너쉽 📋', line2: '무장 담보대출', line3: '문의 : 무장 (100)' } });
+  });
+});
+
 // 활성 광고 조회 (사용자용 - 만료되지 않은 것만)
 app.get('/api/advertisements', (req, res) => {
   db.query('SELECT * FROM advertisements WHERE expires_at > NOW() ORDER BY created_at DESC', (err, results) => {

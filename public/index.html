@@ -728,7 +728,6 @@
             backdrop-filter: blur(15px);
             padding: 20px;
             border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
             border: 3px solid #ffd700;
             margin-bottom: 15px;
             text-align: center;
@@ -740,6 +739,7 @@
             font-weight: 800;
             margin-bottom: 8px;
             line-height: 1.4;
+            color: #333;
         }
 
         .ad-header-line .gradient-text {
@@ -951,10 +951,10 @@
     <!-- 광고 컨테이너 (오른쪽 고정) -->
     <div class="ads-container" id="adsContainer">
         <!-- 고정 헤더 카드 -->
-        <div class="ad-header-card">
-            <div class="ad-header-line">📋 <span class="gradient-text">파트너쉽</span> 📋</div>
-            <div class="ad-header-line"><span class="gradient-text">무장 담보대출</span></div>
-            <div class="ad-header-line"><span class="gradient-text">문의 : 무장 (100)</span></div>
+        <div class="ad-header-card" id="adHeaderCard">
+            <div class="ad-header-line" id="adHeaderLine1">📋 <span class="gradient-text">파트너쉽</span> 📋</div>
+            <div class="ad-header-line" id="adHeaderLine2">무장 담보대출</div>
+            <div class="ad-header-line" id="adHeaderLine3"><span class="gradient-text">문의 : 무장 (100)</span></div>
         </div>
         <!-- 동적 광고들이 여기에 추가됨 -->
     </div>
@@ -1568,8 +1568,42 @@
             }, 60000); // 1분
         }
 
+        // 광고 헤더 로드
+        async function loadAdHeader() {
+            try {
+                const response = await fetch('/api/ad-header');
+                const data = await response.json();
+
+                if (data.success) {
+                    const line1Element = document.getElementById('adHeaderLine1');
+                    const line2Element = document.getElementById('adHeaderLine2');
+                    const line3Element = document.getElementById('adHeaderLine3');
+
+                    // 첫 번째 줄: 이모지 포함, 그라데이션 효과
+                    const hasEmoji1 = /[\u{1F000}-\u{1F9FF}]/u.test(data.data.line1);
+                    if (hasEmoji1) {
+                        // 이모지와 텍스트 분리
+                        const text = data.data.line1.replace(/[\u{1F000}-\u{1F9FF}]/gu, '').trim();
+                        const emojis = data.data.line1.match(/[\u{1F000}-\u{1F9FF}]/gu) || [];
+                        line1Element.innerHTML = `${emojis[0] || ''} <span class="gradient-text">${text}</span> ${emojis[1] || ''}`;
+                    } else {
+                        line1Element.innerHTML = `<span class="gradient-text">${data.data.line1}</span>`;
+                    }
+
+                    // 두 번째 줄: 일반 텍스트
+                    line2Element.textContent = data.data.line2;
+
+                    // 세 번째 줄: 그라데이션 효과
+                    line3Element.innerHTML = `<span class="gradient-text">${data.data.line3}</span>`;
+                }
+            } catch (error) {
+                console.error('광고 헤더 로드 실패:', error);
+            }
+        }
+
         // 페이지 로드 시 광고 로드
         document.addEventListener('DOMContentLoaded', () => {
+            loadAdHeader();
             loadAdvertisements();
             startAdAutoRefresh();
         });

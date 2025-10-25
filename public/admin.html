@@ -817,6 +817,24 @@
                     </div>
                     <button class="btn btn-primary" onclick="changeAdminPassword()">변경</button>
                 </div>
+
+                <div class="card">
+                    <h2>광고 헤더 설정</h2>
+                    <div id="adHeaderMessage" class="message"></div>
+                    <div class="form-group">
+                        <label>첫 번째 줄 (이모지 포함 가능)</label>
+                        <input type="text" id="adHeaderLine1" placeholder="예: 📋 파트너쉽 📋" />
+                    </div>
+                    <div class="form-group">
+                        <label>두 번째 줄</label>
+                        <input type="text" id="adHeaderLine2" placeholder="예: 무장 담보대출" />
+                    </div>
+                    <div class="form-group">
+                        <label>세 번째 줄</label>
+                        <input type="text" id="adHeaderLine3" placeholder="예: 문의 : 무장 (100)" />
+                    </div>
+                    <button class="btn btn-primary" onclick="updateAdHeader()">업데이트</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1591,6 +1609,56 @@
                 }
             } catch (error) {
                 console.error('Failed to load stats:', error);
+            }
+
+            // 광고 헤더 정보 로드
+            loadAdHeader();
+        }
+
+        // 광고 헤더 설정 로드
+        async function loadAdHeader() {
+            try {
+                const response = await fetch('/api/admin/ad-header');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('adHeaderLine1').value = data.data.line1;
+                    document.getElementById('adHeaderLine2').value = data.data.line2;
+                    document.getElementById('adHeaderLine3').value = data.data.line3;
+                }
+            } catch (error) {
+                console.error('광고 헤더 로드 실패:', error);
+            }
+        }
+
+        // 광고 헤더 업데이트
+        async function updateAdHeader() {
+            const messageDiv = document.getElementById('adHeaderMessage');
+            const line1 = document.getElementById('adHeaderLine1').value;
+            const line2 = document.getElementById('adHeaderLine2').value;
+            const line3 = document.getElementById('adHeaderLine3').value;
+
+            if (!line1 || !line2 || !line3) {
+                showMessage(messageDiv, '모든 줄을 입력하세요', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/ad-header', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ line1, line2, line3 })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(messageDiv, data.message, 'success');
+                } else {
+                    showMessage(messageDiv, data.message || '업데이트 실패', 'error');
+                }
+            } catch (error) {
+                showMessage(messageDiv, '서버 오류가 발생했습니다', 'error');
             }
         }
 
