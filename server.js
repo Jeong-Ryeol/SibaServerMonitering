@@ -365,7 +365,7 @@ app.get('/api/admin/active-admins', requireAdmin, (req, res) => {
 
 // 고유번호 일괄 변경 (관리자용)
 app.post('/api/admin/bulk-update-id', requireAdmin, (req, res) => {
-  const { oldId, newId } = req.body;
+  const { oldId, newId, type } = req.body;
 
   if (!oldId || !newId) {
     return res.status(400).json({ success: false, message: '기존 고유번호와 새 고유번호를 모두 입력하세요' });
@@ -375,22 +375,39 @@ app.post('/api/admin/bulk-update-id', requireAdmin, (req, res) => {
     return res.status(400).json({ success: false, message: '기존 고유번호와 새 고유번호가 같습니다' });
   }
 
-  // unique_id, victim_id, attacker_id 모두 업데이트
-  db.query(
-    'UPDATE fraud_reports SET unique_id = ?, victim_id = CASE WHEN victim_id = ? THEN ? ELSE victim_id END, attacker_id = CASE WHEN attacker_id = ? THEN ? ELSE attacker_id END WHERE victim_id = ? OR attacker_id = ?',
-    [newId, oldId, newId, oldId, newId, oldId, oldId],
-    (err, result) => {
-      if (err) {
-        console.error('Bulk update error:', err);
-        return res.status(500).json({ success: false, message: '업데이트 실패' });
-      }
-      res.json({
-        success: true,
-        message: '고유번호가 일괄 변경되었습니다',
-        updatedCount: result.affectedRows
-      });
+  let query = '';
+  let params = [];
+  let message = '';
+
+  // 변경 유형에 따라 쿼리 설정
+  if (type === 'attacker') {
+    // 가해자만 변경 (unique_id와 attacker_id)
+    query = 'UPDATE fraud_reports SET unique_id = ?, attacker_id = ? WHERE attacker_id = ?';
+    params = [newId, newId, oldId];
+    message = '가해자 고유번호가 일괄 변경되었습니다';
+  } else if (type === 'victim') {
+    // 피해자만 변경
+    query = 'UPDATE fraud_reports SET victim_id = ? WHERE victim_id = ?';
+    params = [newId, oldId];
+    message = '피해자 고유번호가 일괄 변경되었습니다';
+  } else {
+    // 둘 다 변경 (기본값)
+    query = 'UPDATE fraud_reports SET unique_id = ?, victim_id = CASE WHEN victim_id = ? THEN ? ELSE victim_id END, attacker_id = CASE WHEN attacker_id = ? THEN ? ELSE attacker_id END WHERE victim_id = ? OR attacker_id = ?';
+    params = [newId, oldId, newId, oldId, newId, oldId, oldId];
+    message = '가해자/피해자 고유번호가 일괄 변경되었습니다';
+  }
+
+  db.query(query, params, (err, result) => {
+    if (err) {
+      console.error('Bulk update error:', err);
+      return res.status(500).json({ success: false, message: '업데이트 실패' });
     }
-  );
+    res.json({
+      success: true,
+      message: message,
+      updatedCount: result.affectedRows
+    });
+  });
 });
 
 // ==================== 제보 제출 API ====================
