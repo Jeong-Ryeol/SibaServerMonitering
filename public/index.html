@@ -694,22 +694,19 @@
             display: none !important;
         }
 
-        /* 이스터에그 스타일 - 개발자/관리자 */
+        /* 이스터에그 스타일 - 개발자/관리자 (성능 최적화) */
         .easter-egg-container {
             text-align: center;
             padding: 60px 40px;
             background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 400% 400%;
+            background-size: 200% 200%;
             border-radius: 30px;
-            border: 5px solid transparent;
-            box-shadow:
-                0 0 60px rgba(102, 126, 234, 0.8),
-                0 0 120px rgba(245, 87, 108, 0.6),
-                0 0 180px rgba(118, 75, 162, 0.4),
-                inset 0 0 60px rgba(255, 255, 255, 0.3);
-            animation: easterEggGlow 3s ease-in-out infinite, gradientShift 6s ease infinite;
+            border: 3px solid #ffd700;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: easterEggGlow 3s ease-in-out infinite;
             position: relative;
             overflow: hidden;
+            will-change: transform;
         }
 
         .easter-egg-container::before {
@@ -722,86 +719,59 @@
             background: linear-gradient(
                 45deg,
                 transparent,
-                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0.2),
                 transparent
             );
             transform: rotate(45deg);
-            animation: easterEggShine 4s linear infinite;
+            animation: easterEggShine 3s linear infinite;
+            will-change: transform;
         }
 
         .easter-egg-title {
             font-size: 4em;
             font-weight: 900;
-            background: linear-gradient(135deg, #fff, #ffd700, #fff, #ffd700);
+            background: linear-gradient(135deg, #fff, #ffd700);
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow:
-                0 0 20px rgba(255, 255, 255, 0.8),
-                0 0 40px rgba(255, 215, 0, 0.6),
-                0 0 60px rgba(255, 215, 0, 0.4);
-            animation: easterEggText 2s ease-in-out infinite, gradientShift 4s ease infinite;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            animation: easterEggText 2s ease-in-out infinite;
             margin-bottom: 20px;
             position: relative;
             z-index: 1;
+            will-change: transform;
         }
 
         .easter-egg-subtitle {
             font-size: 2em;
             font-weight: 700;
             color: #fff;
-            text-shadow:
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(102, 126, 234, 0.8),
-                0 0 30px rgba(245, 87, 108, 0.6);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
             animation: easterEggPulse 2s ease-in-out infinite;
             position: relative;
             z-index: 1;
             margin-top: 15px;
+            will-change: transform, opacity;
         }
 
         .easter-egg-sparkle {
             font-size: 5em;
             display: block;
-            animation: easterEggRotate 3s linear infinite, easterEggSparkle 1.5s ease-in-out infinite;
+            animation: easterEggRotate 3s linear infinite;
             margin: 30px 0;
-            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.8));
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+            will-change: transform;
         }
 
         @keyframes easterEggGlow {
             0%, 100% {
-                box-shadow:
-                    0 0 100px rgba(102, 126, 234, 1),
-                    0 0 200px rgba(245, 87, 108, 1),
-                    0 0 300px rgba(118, 75, 162, 0.8),
-                    0 0 400px rgba(255, 215, 0, 0.6),
-                    inset 0 0 100px rgba(255, 255, 255, 0.5),
-                    inset 0 0 50px rgba(255, 215, 0, 0.8);
-                border-color: rgba(255, 215, 0, 1);
                 transform: scale(1);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             }
-            33% {
-                box-shadow:
-                    0 0 150px rgba(245, 87, 108, 1),
-                    0 0 250px rgba(118, 75, 162, 1),
-                    0 0 350px rgba(102, 126, 234, 0.8),
-                    0 0 450px rgba(255, 215, 0, 0.8),
-                    inset 0 0 120px rgba(255, 255, 255, 0.7),
-                    inset 0 0 70px rgba(255, 107, 255, 1);
-                border-color: rgba(255, 107, 255, 1);
+            50% {
                 transform: scale(1.02);
-            }
-            66% {
-                box-shadow:
-                    0 0 120px rgba(118, 75, 162, 1),
-                    0 0 220px rgba(102, 126, 234, 1),
-                    0 0 320px rgba(245, 87, 108, 0.8),
-                    0 0 420px rgba(255, 215, 0, 0.8),
-                    inset 0 0 110px rgba(255, 255, 255, 0.6),
-                    inset 0 0 60px rgba(0, 255, 255, 1);
-                border-color: rgba(0, 255, 255, 1);
-                transform: scale(1.01);
+                box-shadow: 0 25px 70px rgba(102, 126, 234, 0.6);
             }
         }
 
@@ -816,20 +786,10 @@
 
         @keyframes easterEggText {
             0%, 100% {
-                transform: scale(1) translateY(0) rotate(0deg);
-                filter: brightness(1) drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
-            }
-            25% {
-                transform: scale(1.2) translateY(-15px) rotate(-2deg);
-                filter: brightness(1.5) drop-shadow(0 0 50px rgba(255, 215, 0, 1)) drop-shadow(0 0 80px rgba(255, 255, 255, 0.8));
+                transform: scale(1) translateY(0);
             }
             50% {
-                transform: scale(1.25) translateY(-20px) rotate(0deg);
-                filter: brightness(2) drop-shadow(0 0 60px rgba(255, 215, 0, 1)) drop-shadow(0 0 100px rgba(255, 107, 255, 1));
-            }
-            75% {
-                transform: scale(1.2) translateY(-15px) rotate(2deg);
-                filter: brightness(1.5) drop-shadow(0 0 50px rgba(255, 215, 0, 1)) drop-shadow(0 0 80px rgba(0, 255, 255, 0.8));
+                transform: scale(1.1) translateY(-10px);
             }
         }
 
@@ -837,22 +797,10 @@
             0%, 100% {
                 opacity: 1;
                 transform: scale(1);
-                filter: brightness(1) drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
-            }
-            25% {
-                opacity: 1;
-                transform: scale(1.12);
-                filter: brightness(1.3) drop-shadow(0 0 40px rgba(255, 107, 255, 1)) drop-shadow(0 0 60px rgba(255, 215, 0, 0.8));
             }
             50% {
-                opacity: 1;
-                transform: scale(1.15);
-                filter: brightness(1.5) drop-shadow(0 0 50px rgba(0, 255, 255, 1)) drop-shadow(0 0 80px rgba(255, 255, 255, 1));
-            }
-            75% {
-                opacity: 1;
-                transform: scale(1.12);
-                filter: brightness(1.3) drop-shadow(0 0 40px rgba(102, 126, 234, 1)) drop-shadow(0 0 60px rgba(245, 87, 108, 0.8));
+                opacity: 0.9;
+                transform: scale(1.05);
             }
         }
 
@@ -860,35 +808,11 @@
             0% {
                 transform: rotate(0deg) scale(1);
             }
-            25% {
-                transform: rotate(90deg) scale(1.3);
-            }
             50% {
-                transform: rotate(180deg) scale(1.5);
-            }
-            75% {
-                transform: rotate(270deg) scale(1.3);
+                transform: rotate(180deg) scale(1.2);
             }
             100% {
                 transform: rotate(360deg) scale(1);
-            }
-        }
-
-        @keyframes easterEggSparkle {
-            0%, 100% {
-                filter: brightness(1) drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.8));
-            }
-            20% {
-                filter: brightness(2) drop-shadow(0 0 40px rgba(255, 107, 255, 1)) drop-shadow(0 0 80px rgba(255, 107, 255, 1)) drop-shadow(0 0 120px rgba(255, 215, 0, 1));
-            }
-            40% {
-                filter: brightness(2.5) drop-shadow(0 0 50px rgba(0, 255, 255, 1)) drop-shadow(0 0 100px rgba(0, 255, 255, 1)) drop-shadow(0 0 150px rgba(255, 255, 255, 1));
-            }
-            60% {
-                filter: brightness(2) drop-shadow(0 0 40px rgba(102, 126, 234, 1)) drop-shadow(0 0 80px rgba(102, 126, 234, 1)) drop-shadow(0 0 120px rgba(255, 215, 0, 1));
-            }
-            80% {
-                filter: brightness(1.5) drop-shadow(0 0 30px rgba(245, 87, 108, 1)) drop-shadow(0 0 60px rgba(245, 87, 108, 1)) drop-shadow(0 0 90px rgba(255, 215, 0, 0.8));
             }
         }
     </style>
