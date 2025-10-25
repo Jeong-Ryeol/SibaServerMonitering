@@ -873,8 +873,8 @@
                     return;
                 }
 
-                // 블랙리스트 헤더 추가 (깜빡임 방지 - 내용이 바뀔 때만 업데이트)
-                resultsDiv.innerHTML = '<div class="blacklist-header"><div class="blacklist-title">⚠️ 블랙리스트 ⚠️</div></div>';
+                // 조회 결과 헤더 추가 (깜빡임 방지 - 내용이 바뀔 때만 업데이트)
+                resultsDiv.innerHTML = `<div class="blacklist-header"><div class="blacklist-title">조회하신 [ ${uniqueId} ] 에 대한 결과입니다</div></div>`;
 
                 data.data.forEach(report => {
                     const item = document.createElement('div');
