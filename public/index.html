@@ -467,8 +467,9 @@
             border-radius: 25px;
             border: 3px solid #e0e0e0;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.4s;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
+            overflow: hidden;
         }
 
         .result-item::before {
@@ -480,16 +481,59 @@
             height: 5px;
             background: linear-gradient(90deg, #667eea, #764ba2, #f5576c);
             border-radius: 25px 25px 0 0;
+            transition: all 0.5s;
+        }
+
+        .result-item::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                transparent,
+                rgba(102, 126, 234, 0.1),
+                rgba(245, 87, 108, 0.1),
+                transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+            opacity: 0;
         }
 
         .result-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25), 0 10px 25px rgba(245, 87, 108, 0.15);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow:
+                0 30px 60px rgba(102, 126, 234, 0.4),
+                0 15px 35px rgba(245, 87, 108, 0.3),
+                0 0 40px rgba(118, 75, 162, 0.2),
+                inset 0 0 0 2px rgba(102, 126, 234, 0.3);
             border-color: #667eea;
+            background: linear-gradient(135deg, #ffffff, #f8f9ff);
+        }
+
+        .result-item:hover::before {
+            height: 8px;
+            background: linear-gradient(90deg, #667eea, #f5576c, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: gradientShift 2s ease infinite;
+        }
+
+        .result-item:hover::after {
+            opacity: 1;
+            left: 100%;
         }
 
         .result-item:nth-child(even)::before {
             background: linear-gradient(90deg, #f5576c, #764ba2, #667eea);
+        }
+
+        .result-item:nth-child(even):hover {
+            box-shadow:
+                0 30px 60px rgba(245, 87, 108, 0.4),
+                0 15px 35px rgba(102, 126, 234, 0.3),
+                0 0 40px rgba(118, 75, 162, 0.2),
+                inset 0 0 0 2px rgba(245, 87, 108, 0.3);
         }
 
         .result-item h3 {
