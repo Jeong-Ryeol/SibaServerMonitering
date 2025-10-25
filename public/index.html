@@ -746,28 +746,46 @@
         }
 
         .easter-egg-sparkle {
-            font-size: 3em;
-            display: inline-block;
+            font-size: 5em;
+            display: block;
             animation: easterEggRotate 3s linear infinite, easterEggSparkle 1.5s ease-in-out infinite;
-            margin: 0 10px;
+            margin: 30px 0;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.8));
         }
 
         @keyframes easterEggGlow {
             0%, 100% {
                 box-shadow:
-                    0 0 60px rgba(102, 126, 234, 0.8),
-                    0 0 120px rgba(245, 87, 108, 0.6),
-                    0 0 180px rgba(118, 75, 162, 0.4),
-                    inset 0 0 60px rgba(255, 255, 255, 0.3);
-                border-color: rgba(255, 215, 0, 0.8);
+                    0 0 100px rgba(102, 126, 234, 1),
+                    0 0 200px rgba(245, 87, 108, 1),
+                    0 0 300px rgba(118, 75, 162, 0.8),
+                    0 0 400px rgba(255, 215, 0, 0.6),
+                    inset 0 0 100px rgba(255, 255, 255, 0.5),
+                    inset 0 0 50px rgba(255, 215, 0, 0.8);
+                border-color: rgba(255, 215, 0, 1);
+                transform: scale(1);
             }
-            50% {
+            33% {
                 box-shadow:
-                    0 0 80px rgba(102, 126, 234, 1),
-                    0 0 160px rgba(245, 87, 108, 0.8),
-                    0 0 240px rgba(118, 75, 162, 0.6),
-                    inset 0 0 80px rgba(255, 255, 255, 0.5);
-                border-color: rgba(255, 255, 255, 1);
+                    0 0 150px rgba(245, 87, 108, 1),
+                    0 0 250px rgba(118, 75, 162, 1),
+                    0 0 350px rgba(102, 126, 234, 0.8),
+                    0 0 450px rgba(255, 215, 0, 0.8),
+                    inset 0 0 120px rgba(255, 255, 255, 0.7),
+                    inset 0 0 70px rgba(255, 107, 255, 1);
+                border-color: rgba(255, 107, 255, 1);
+                transform: scale(1.02);
+            }
+            66% {
+                box-shadow:
+                    0 0 120px rgba(118, 75, 162, 1),
+                    0 0 220px rgba(102, 126, 234, 1),
+                    0 0 320px rgba(245, 87, 108, 0.8),
+                    0 0 420px rgba(255, 215, 0, 0.8),
+                    inset 0 0 110px rgba(255, 255, 255, 0.6),
+                    inset 0 0 60px rgba(0, 255, 255, 1);
+                border-color: rgba(0, 255, 255, 1);
+                transform: scale(1.01);
             }
         }
 
@@ -782,39 +800,79 @@
 
         @keyframes easterEggText {
             0%, 100% {
-                transform: scale(1) translateY(0);
+                transform: scale(1) translateY(0) rotate(0deg);
+                filter: brightness(1) drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+            }
+            25% {
+                transform: scale(1.2) translateY(-15px) rotate(-2deg);
+                filter: brightness(1.5) drop-shadow(0 0 50px rgba(255, 215, 0, 1)) drop-shadow(0 0 80px rgba(255, 255, 255, 0.8));
             }
             50% {
-                transform: scale(1.15) translateY(-10px);
+                transform: scale(1.25) translateY(-20px) rotate(0deg);
+                filter: brightness(2) drop-shadow(0 0 60px rgba(255, 215, 0, 1)) drop-shadow(0 0 100px rgba(255, 107, 255, 1));
+            }
+            75% {
+                transform: scale(1.2) translateY(-15px) rotate(2deg);
+                filter: brightness(1.5) drop-shadow(0 0 50px rgba(255, 215, 0, 1)) drop-shadow(0 0 80px rgba(0, 255, 255, 0.8));
             }
         }
 
         @keyframes easterEggPulse {
             0%, 100% {
-                opacity: 0.9;
+                opacity: 1;
                 transform: scale(1);
+                filter: brightness(1) drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+            }
+            25% {
+                opacity: 1;
+                transform: scale(1.12);
+                filter: brightness(1.3) drop-shadow(0 0 40px rgba(255, 107, 255, 1)) drop-shadow(0 0 60px rgba(255, 215, 0, 0.8));
             }
             50% {
                 opacity: 1;
-                transform: scale(1.08);
+                transform: scale(1.15);
+                filter: brightness(1.5) drop-shadow(0 0 50px rgba(0, 255, 255, 1)) drop-shadow(0 0 80px rgba(255, 255, 255, 1));
+            }
+            75% {
+                opacity: 1;
+                transform: scale(1.12);
+                filter: brightness(1.3) drop-shadow(0 0 40px rgba(102, 126, 234, 1)) drop-shadow(0 0 60px rgba(245, 87, 108, 0.8));
             }
         }
 
         @keyframes easterEggRotate {
             0% {
-                transform: rotate(0deg);
+                transform: rotate(0deg) scale(1);
+            }
+            25% {
+                transform: rotate(90deg) scale(1.3);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.5);
+            }
+            75% {
+                transform: rotate(270deg) scale(1.3);
             }
             100% {
-                transform: rotate(360deg);
+                transform: rotate(360deg) scale(1);
             }
         }
 
         @keyframes easterEggSparkle {
             0%, 100% {
-                filter: brightness(1) drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+                filter: brightness(1) drop-shadow(0 0 20px rgba(255, 215, 0, 1)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.8));
             }
-            50% {
-                filter: brightness(1.5) drop-shadow(0 0 30px rgba(255, 215, 0, 1));
+            20% {
+                filter: brightness(2) drop-shadow(0 0 40px rgba(255, 107, 255, 1)) drop-shadow(0 0 80px rgba(255, 107, 255, 1)) drop-shadow(0 0 120px rgba(255, 215, 0, 1));
+            }
+            40% {
+                filter: brightness(2.5) drop-shadow(0 0 50px rgba(0, 255, 255, 1)) drop-shadow(0 0 100px rgba(0, 255, 255, 1)) drop-shadow(0 0 150px rgba(255, 255, 255, 1));
+            }
+            60% {
+                filter: brightness(2) drop-shadow(0 0 40px rgba(102, 126, 234, 1)) drop-shadow(0 0 80px rgba(102, 126, 234, 1)) drop-shadow(0 0 120px rgba(255, 215, 0, 1));
+            }
+            80% {
+                filter: brightness(1.5) drop-shadow(0 0 30px rgba(245, 87, 108, 1)) drop-shadow(0 0 60px rgba(245, 87, 108, 1)) drop-shadow(0 0 90px rgba(255, 215, 0, 0.8));
             }
         }
     </style>
@@ -1117,6 +1175,7 @@
                         <div class="easter-egg-subtitle" style="font-size: 1.5em; margin-top: 25px;">💻 개발의 마법사 💻</div>
                     </div>
                 `;
+                // 이스터에그는 자동 새로고침 하지 않음
                 return;
             }
 
@@ -1131,10 +1190,11 @@
                         <div class="easter-egg-subtitle" style="font-size: 1.5em; margin-top: 25px;">⚡ 서버의 리더 ⚡</div>
                     </div>
                 `;
+                // 이스터에그는 자동 새로고침 하지 않음
                 return;
             }
 
-            // 마지막 조회 ID 저장
+            // 마지막 조회 ID 저장 (이스터에그가 아닌 경우만)
             lastSearchedId = uniqueId;
 
             try {
