@@ -847,6 +847,24 @@
             });
         });
 
+        // 숫자를 한글로 변환하는 함수
+        function numberToKorean(number) {
+            const units = ['', '만', '억', '조'];
+            const parts = [];
+            let unitIndex = 0;
+
+            while (number > 0) {
+                const part = number % 10000;
+                if (part > 0) {
+                    parts.unshift(part.toLocaleString() + units[unitIndex]);
+                }
+                number = Math.floor(number / 10000);
+                unitIndex++;
+            }
+
+            return parts.join(' ') || '0';
+        }
+
         // 통계 로드
         async function loadStats() {
             try {
@@ -924,7 +942,10 @@
                             </div>
                             <div class="result-detail-item">
                                 <div class="result-detail-label">금액</div>
-                                <div class="result-detail-value">${report.amount.toLocaleString()}</div>
+                                <div class="result-detail-value">
+                                    ${report.amount.toLocaleString()}
+                                    <span style="font-size: 0.85em; color: #999; margin-left: 8px;">(${numberToKorean(report.amount)})</span>
+                                </div>
                             </div>
                         </div>
                         <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 10px;">
