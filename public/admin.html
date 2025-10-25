@@ -493,10 +493,10 @@
         <div class="admin-panel" id="adminPanel">
             <div class="header">
                 <h1>FIVEM : FREEDOM - 관리자 패널</h1>
-                <div style="margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 15px; text-align: center;">
-                    <div style="font-size: 1.1em; color: rgba(255, 255, 255, 0.8); margin-bottom: 5px;">👨‍💼 접속 중인 관리자</div>
-                    <div id="activeAdminsCount" style="font-size: 2.5em; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);">-</div>
-                    <div style="font-size: 0.9em; color: rgba(255, 255, 255, 0.6); margin-top: 5px;">실시간 업데이트</div>
+                <div style="margin-top: 25px; padding: 30px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)); border-radius: 25px; text-align: center; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.2); border: 3px solid rgba(255, 255, 255, 0.3); animation: pulse 3s ease-in-out infinite;">
+                    <div style="font-size: 1.3em; color: #533483; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px;">접속 중인 관리자</div>
+                    <div id="activeAdminsCount" style="font-size: 4em; font-weight: 900; background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: none; animation: shimmer 3s ease-in-out infinite;">-</div>
+                    <div style="font-size: 1em; color: #666; margin-top: 10px; font-weight: 500;">실시간 업데이트 (10초 주기)</div>
                 </div>
             </div>
 
@@ -755,11 +755,15 @@
                     const countElement = document.getElementById('activeAdminsCount');
                     countElement.textContent = data.activeAdmins;
 
-                    // 숫자에 따라 색상 변경
+                    // 숫자에 따라 그라데이션 색상 변경
                     if (data.activeAdmins > 1) {
-                        countElement.style.color = '#ffeb3b'; // 노란색
+                        countElement.style.background = 'linear-gradient(135deg, #f093fb, #f5576c, #ffd700)';
+                        countElement.style.webkitBackgroundClip = 'text';
+                        countElement.style.backgroundClip = 'text';
                     } else {
-                        countElement.style.color = '#fff'; // 흰색
+                        countElement.style.background = 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)';
+                        countElement.style.webkitBackgroundClip = 'text';
+                        countElement.style.backgroundClip = 'text';
                     }
                 }
             } catch (error) {
