@@ -742,28 +742,6 @@
             background-clip: text;
         }
 
-        .ad-status-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 147, 251, 0.2));
-            backdrop-filter: blur(15px);
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            margin-bottom: 20px;
-            text-align: center;
-            animation: fadeInUp 0.6s ease-out 0.1s;
-            animation-fill-mode: both;
-        }
-
-        .ad-status-text {
-            font-size: 1.1em;
-            font-weight: 700;
-            background: linear-gradient(135deg, #764ba2, #f093fb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
         .ad-card {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(15px);
@@ -966,9 +944,6 @@
             <div class="ad-header-title">파트너쉽</div>
             <div class="ad-header-title">무장 담보대출</div>
             <div class="ad-header-subtitle">문의 : 무장 (100)</div>
-        </div>
-        <div class="ad-status-card" id="adStatusCard" style="display: none;">
-            <div class="ad-status-text">광고 ㅇㅇ중</div>
         </div>
         <!-- 동적 광고들이 여기에 추가됨 -->
     </div>
@@ -1495,16 +1470,12 @@
                 const data = await response.json();
 
                 const container = document.getElementById('adsContainer');
-                const statusCard = document.getElementById('adStatusCard');
 
                 // 기존 동적 광고만 제거 (고정 헤더 카드는 유지)
                 const dynamicAds = container.querySelectorAll('.ad-card');
                 dynamicAds.forEach(ad => ad.remove());
 
                 if (data.success && data.data.length > 0) {
-                    // 광고가 있으면 상태 카드 표시
-                    statusCard.style.display = 'block';
-
                     data.data.forEach(ad => {
                         const card = document.createElement('div');
                         card.className = 'ad-card';
@@ -1524,9 +1495,6 @@
 
                     // 타이머 시작
                     startAdTimers();
-                } else {
-                    // 광고가 없으면 상태 카드 숨김
-                    statusCard.style.display = 'none';
                 }
             } catch (error) {
                 console.error('광고 로드 실패:', error);
@@ -1570,11 +1538,9 @@
                     }
                 });
 
-                // 모든 광고가 만료되었으면 상태 카드 숨기고 다시 로드
+                // 모든 광고가 만료되었으면 다시 로드
                 const remainingAds = document.querySelectorAll('.ad-card');
                 if (remainingAds.length === 0) {
-                    const statusCard = document.getElementById('adStatusCard');
-                    statusCard.style.display = 'none';
                     loadAdvertisements();
                 }
             };
