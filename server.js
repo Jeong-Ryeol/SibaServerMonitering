@@ -109,7 +109,7 @@ app.get('/api/fraud-reports/:uniqueId', (req, res) => {
   const uniqueId = parseInt(req.params.uniqueId);
 
   if (!req.session.siteAuthorized) {
-    return res.status(401).json({ success: false, message: '인증이 필요합니다.' });
+    return res.status(401).json({ success: false, message: '세션 만료로 인해 새로고침 후 재로그인 부탁드립니다.' });
   }
 
   db.query(
@@ -338,7 +338,7 @@ app.get('/api/admin/active-admins', requireAdmin, (req, res) => {
 // 사용자 제보 제출
 app.post('/api/submit-report', (req, res) => {
   if (!req.session.siteAuthorized) {
-    return res.status(401).json({ success: false, message: '인증이 필요합니다.' });
+    return res.status(401).json({ success: false, message: '세션 만료로 인해 새로고침 후 재로그인 부탁드립니다.' });
   }
 
   const { reporterUniqueId, reporterNickname, discordId, reportDate, fraudsterUniqueId, amount, reason } = req.body;
