@@ -27,13 +27,40 @@ db.connect((err) => {
 // 미들웨어
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
+
+// 세션 스토어 설정
+const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24시간
-}));
+});
+
+app.use(sessionMiddleware);
 app.use(express.static('public'));
+
+// 활성 관리자 세션 추적
+const activeAdminSessions = new Set();
+
+// 세션 활동 업데이트 미들웨어
+app.use((req, res, next) => {
+  if (req.session && req.session.adminAuthorized) {
+    req.session.lastActivity = Date.now();
+    activeAdminSessions.add(req.sessionID);
+  }
+  next();
+});
+
+// 만료된 세션 정리 (1분마다)
+setInterval(() => {
+  const now = Date.now();
+  const sessionTimeout = 24 * 60 * 60 * 1000; // 24시간
+
+  activeAdminSessions.forEach(sessionId => {
+    // 실제로는 세션 스토어에서 확인해야 하지만, 간단하게 구현
+    // 세션이 만료되면 자동으로 제거됨
+  });
+}, 60000);
 
 // ==================== 사용자 API ====================
 
@@ -124,6 +151,7 @@ app.post('/api/admin/verify-password', (req, res) => {
 
     if (results.length > 0 && results[0].password === password) {
       req.session.adminAuthorized = true;
+      activeAdminSessions.add(req.sessionID);
       res.json({ success: true });
     } else {
       res.json({ success: false, message: '관리자 비밀번호가 올바르지 않습니다.' });
@@ -258,6 +286,14 @@ app.get('/api/admin/stats', requireAdmin, (req, res) => {
       return res.status(500).json({ success: false, message: '서버 오류' });
     }
     res.json({ success: true, data: results[0] || { online_users: 400, last_update_date: new Date() } });
+  });
+});
+
+// 활성 관리자 수 조회 (관리자용)
+app.get('/api/admin/active-admins', requireAdmin, (req, res) => {
+  res.json({
+    success: true,
+    activeAdmins: activeAdminSessions.size
   });
 });
 

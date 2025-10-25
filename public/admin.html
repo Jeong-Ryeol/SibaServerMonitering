@@ -493,6 +493,11 @@
         <div class="admin-panel" id="adminPanel">
             <div class="header">
                 <h1>FIVEM : FREEDOM - 관리자 패널</h1>
+                <div style="margin-top: 15px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 15px; text-align: center;">
+                    <div style="font-size: 1.1em; color: rgba(255, 255, 255, 0.8); margin-bottom: 5px;">👨‍💼 접속 중인 관리자</div>
+                    <div id="activeAdminsCount" style="font-size: 2.5em; font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);">-</div>
+                    <div style="font-size: 0.9em; color: rgba(255, 255, 255, 0.6); margin-top: 5px;">실시간 업데이트</div>
+                </div>
             </div>
 
             <div class="tabs">
@@ -711,6 +716,8 @@
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('adminPanel').classList.add('active');
                     loadFraudReports();
+                    loadActiveAdmins(); // 활성 관리자 수 로드
+                    startAutoRefreshAdmins(); // 10초마다 자동 갱신
                 } else {
                     showMessage(errorDiv, data.message || 'Incorrect password', 'error');
                 }
@@ -730,10 +737,41 @@
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('adminPanel').classList.add('active');
                     loadPendingReports();
+                    loadActiveAdmins(); // 활성 관리자 수 로드
+                    startAutoRefreshAdmins(); // 10초마다 자동 갱신
                 }
             } catch (error) {
                 console.error('세션 확인 실패:', error);
             }
+        }
+
+        // 활성 관리자 수 로드
+        async function loadActiveAdmins() {
+            try {
+                const response = await fetch('/api/admin/active-admins');
+                const data = await response.json();
+
+                if (data.success) {
+                    const countElement = document.getElementById('activeAdminsCount');
+                    countElement.textContent = data.activeAdmins;
+
+                    // 숫자에 따라 색상 변경
+                    if (data.activeAdmins > 1) {
+                        countElement.style.color = '#ffeb3b'; // 노란색
+                    } else {
+                        countElement.style.color = '#fff'; // 흰색
+                    }
+                }
+            } catch (error) {
+                console.error('활성 관리자 수 로드 실패:', error);
+            }
+        }
+
+        // 활성 관리자 수 자동 갱신 (10초마다)
+        function startAutoRefreshAdmins() {
+            setInterval(() => {
+                loadActiveAdmins();
+            }, 10000); // 10초
         }
 
         document.addEventListener('DOMContentLoaded', () => {
