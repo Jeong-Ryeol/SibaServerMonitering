@@ -104,7 +104,7 @@ app.post('/api/verify-site-password', (req, res) => {
   });
 });
 
-// 고유번호로 사기 신고 조회
+// 고유번호로 사기 신고 조회 (가해자 고유번호 기준)
 app.get('/api/fraud-reports/:uniqueId', (req, res) => {
   const uniqueId = parseInt(req.params.uniqueId);
 
@@ -113,7 +113,7 @@ app.get('/api/fraud-reports/:uniqueId', (req, res) => {
   }
 
   db.query(
-    'SELECT * FROM fraud_reports WHERE unique_id = ? ORDER BY report_date DESC',
+    'SELECT * FROM fraud_reports WHERE attacker_id = ? ORDER BY report_date DESC',
     [uniqueId],
     (err, results) => {
       if (err) {
