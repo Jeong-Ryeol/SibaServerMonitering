@@ -981,7 +981,16 @@
                                     ${report.amount_type === 'item'
                                         ? report.amount
                                         : report.amount_type === 'both'
-                                            ? report.amount
+                                            ? (() => {
+                                                // "500,000 + 람보르기니" 형식 파싱
+                                                const parts = report.amount.split(' + ');
+                                                if (parts.length === 2) {
+                                                    const moneyPart = parts[0].replace(/,/g, '');
+                                                    const itemPart = parts[1];
+                                                    return `${parseInt(moneyPart).toLocaleString()} <span style="font-size: 0.75em; color: #999; margin-left: 8px;">(${numberToKorean(parseInt(moneyPart))})</span> + ${itemPart}`;
+                                                }
+                                                return report.amount;
+                                            })()
                                             : `${parseInt(report.amount).toLocaleString()} <span style="font-size: 0.75em; color: #999; margin-left: 8px;">(${numberToKorean(parseInt(report.amount))})</span>`
                                     }
                                 </span>
