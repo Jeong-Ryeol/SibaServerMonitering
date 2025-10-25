@@ -531,10 +531,23 @@
                         <input type="number" id="fraudUniqueId" placeholder="2200" />
                     </div>
                     <div class="form-group">
-                        <label>금액</label>
-                        <div class="amount-input-wrapper">
+                        <label>금액/아이템 타입</label>
+                        <div style="display: flex; gap: 20px; margin-bottom: 10px;">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="radio" name="amountType" value="money" checked onchange="toggleAmountInput()" style="margin-right: 8px;" />
+                                금액
+                            </label>
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="radio" name="amountType" value="item" onchange="toggleAmountInput()" style="margin-right: 8px;" />
+                                아이템
+                            </label>
+                        </div>
+                        <div class="amount-input-wrapper" id="moneyInput">
                             <input type="number" id="fraudAmount" placeholder="500000" oninput="updateAmountDisplay('fraudAmount', 'fraudAmountDisplay')" />
                             <span class="amount-unit-display" id="fraudAmountDisplay"></span>
+                        </div>
+                        <div id="itemInput" style="display: none;">
+                            <input type="text" id="fraudItem" placeholder="예: 람보르기니, 다이아몬드 x5" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -866,6 +879,21 @@
             }
         }
 
+        // 금액/아이템 입력 토글
+        function toggleAmountInput() {
+            const amountType = document.querySelector('input[name="amountType"]:checked').value;
+            const moneyInput = document.getElementById('moneyInput');
+            const itemInput = document.getElementById('itemInput');
+
+            if (amountType === 'money') {
+                moneyInput.style.display = 'block';
+                itemInput.style.display = 'none';
+            } else {
+                moneyInput.style.display = 'none';
+                itemInput.style.display = 'block';
+            }
+        }
+
         // 사기 신고 추가
         async function addFraudReport() {
             const messageDiv = document.getElementById('fraudMessage');
@@ -873,7 +901,8 @@
             const month = document.getElementById('fraudMonth').value;
             const day = document.getElementById('fraudDay').value;
             const uniqueId = document.getElementById('fraudUniqueId').value;
-            const amount = document.getElementById('fraudAmount').value;
+            const amountType = document.querySelector('input[name="amountType"]:checked').value;
+            const amount = amountType === 'money' ? document.getElementById('fraudAmount').value : document.getElementById('fraudItem').value;
             const reason = document.getElementById('fraudReason').value;
 
             if (!year || !month || !day || !uniqueId || !amount || !reason) {
@@ -888,7 +917,13 @@
                 const response = await fetch('/api/admin/fraud-reports', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ reportDate, uniqueId: parseInt(uniqueId), amount: parseInt(amount), reason })
+                    body: JSON.stringify({
+                        reportDate,
+                        uniqueId: parseInt(uniqueId),
+                        amount: amountType === 'money' ? parseInt(amount) : amount,
+                        amountType,
+                        reason
+                    })
                 });
 
                 const data = await response.json();
@@ -900,7 +935,10 @@
                     document.getElementById('fraudDay').value = '';
                     document.getElementById('fraudUniqueId').value = '';
                     document.getElementById('fraudAmount').value = '';
+                    document.getElementById('fraudItem').value = '';
                     document.getElementById('fraudReason').value = '';
+                    document.querySelector('input[name="amountType"][value="money"]').checked = true;
+                    toggleAmountInput();
                     loadFraudReports();
                 } else {
                     showMessage(messageDiv, data.message || 'Failed to add report', 'error');

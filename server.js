@@ -205,11 +205,11 @@ const requireAdmin = (req, res, next) => {
 
 // 사기 신고 등록
 app.post('/api/admin/fraud-reports', requireAdmin, (req, res) => {
-  const { reportDate, uniqueId, amount, reason } = req.body;
+  const { reportDate, uniqueId, amount, amountType, reason } = req.body;
 
   db.query(
-    'INSERT INTO fraud_reports (report_date, unique_id, amount, reason) VALUES (?, ?, ?, ?)',
-    [reportDate, uniqueId, amount, reason],
+    'INSERT INTO fraud_reports (report_date, unique_id, amount, amount_type, reason) VALUES (?, ?, ?, ?, ?)',
+    [reportDate, uniqueId, amount, amountType || 'money', reason],
     (err, result) => {
       if (err) {
         return res.status(500).json({ success: false, message: '등록 실패' });
