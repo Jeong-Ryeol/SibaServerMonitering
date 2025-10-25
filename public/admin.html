@@ -860,10 +860,28 @@
             }
         }
 
-        // 월 2자리 입력 시 자동으로 일로 포커스 이동
+        // 월 입력 시 자동으로 일로 포커스 이동
+        let monthTimeout;
         function autoFocusMonth(input) {
+            clearTimeout(monthTimeout);
+
+            const value = parseInt(input.value);
+
+            // 2자리 입력되면 즉시 이동 (10, 11, 12)
             if (input.value.length === 2) {
                 document.getElementById('fraudDay').focus();
+            }
+            // 1자리 입력이고 2 이상이면 즉시 이동 (2-9월)
+            else if (input.value.length === 1 && value >= 2) {
+                monthTimeout = setTimeout(() => {
+                    document.getElementById('fraudDay').focus();
+                }, 500);
+            }
+            // 1자리 입력이고 1이면 대기 (1월 또는 10-12월 가능)
+            else if (input.value.length === 1 && value === 1) {
+                monthTimeout = setTimeout(() => {
+                    document.getElementById('fraudDay').focus();
+                }, 800);
             }
         }
 
