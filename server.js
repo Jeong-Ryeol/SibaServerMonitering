@@ -410,6 +410,50 @@ app.post('/api/admin/bulk-update-id', requireAdmin, (req, res) => {
   });
 });
 
+// 닉네임 일괄 변경 (관리자용)
+app.post('/api/admin/bulk-update-nickname', requireAdmin, (req, res) => {
+  const { oldNickname, newNickname, type } = req.body;
+
+  if (!oldNickname || !newNickname) {
+    return res.status(400).json({ success: false, message: '기존 닉네임과 새 닉네임을 모두 입력하세요' });
+  }
+
+  if (oldNickname === newNickname) {
+    return res.status(400).json({ success: false, message: '기존 닉네임과 새 닉네임이 같습니다' });
+  }
+
+  let query = '';
+  let params = [];
+  let message = '';
+
+  // 변경 유형에 따라 쿼리 설정
+  if (type === 'attacker') {
+    // 가해자 닉네임만 변경
+    query = 'UPDATE fraud_reports SET attacker_nickname = ? WHERE attacker_nickname = ?';
+    params = [newNickname, oldNickname];
+    message = '가해자 닉네임이 일괄 변경되었습니다';
+  } else if (type === 'victim') {
+    // 피해자 닉네임만 변경
+    query = 'UPDATE fraud_reports SET victim_nickname = ? WHERE victim_nickname = ?';
+    params = [newNickname, oldNickname];
+    message = '피해자 닉네임이 일괄 변경되었습니다';
+  } else {
+    return res.status(400).json({ success: false, message: '변경 대상을 선택하세요' });
+  }
+
+  db.query(query, params, (err, result) => {
+    if (err) {
+      console.error('Bulk nickname update error:', err);
+      return res.status(500).json({ success: false, message: '업데이트 실패' });
+    }
+    res.json({
+      success: true,
+      message: message,
+      updatedCount: result.affectedRows
+    });
+  });
+});
+
 // ==================== 제보 제출 API ====================
 
 // 사용자 제보 제출
