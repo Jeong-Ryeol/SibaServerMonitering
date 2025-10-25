@@ -475,13 +475,14 @@
         .result-item::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: -3px;
+            left: -3px;
+            right: -3px;
             height: 5px;
             background: linear-gradient(90deg, #667eea, #764ba2, #f5576c);
             border-radius: 25px 25px 0 0;
             transition: all 0.5s;
+            z-index: 1;
         }
 
         .result-item::after {
@@ -675,6 +676,146 @@
 
         .hidden {
             display: none !important;
+        }
+
+        /* 이스터에그 스타일 - 개발자/관리자 */
+        .easter-egg-container {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            border-radius: 30px;
+            border: 5px solid transparent;
+            box-shadow:
+                0 0 60px rgba(102, 126, 234, 0.8),
+                0 0 120px rgba(245, 87, 108, 0.6),
+                0 0 180px rgba(118, 75, 162, 0.4),
+                inset 0 0 60px rgba(255, 255, 255, 0.3);
+            animation: easterEggGlow 3s ease-in-out infinite, gradientShift 6s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .easter-egg-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: easterEggShine 4s linear infinite;
+        }
+
+        .easter-egg-title {
+            font-size: 4em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, #ffd700, #fff, #ffd700);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow:
+                0 0 20px rgba(255, 255, 255, 0.8),
+                0 0 40px rgba(255, 215, 0, 0.6),
+                0 0 60px rgba(255, 215, 0, 0.4);
+            animation: easterEggText 2s ease-in-out infinite, gradientShift 4s ease infinite;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .easter-egg-subtitle {
+            font-size: 2em;
+            font-weight: 700;
+            color: #fff;
+            text-shadow:
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(102, 126, 234, 0.8),
+                0 0 30px rgba(245, 87, 108, 0.6);
+            animation: easterEggPulse 2s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+            margin-top: 15px;
+        }
+
+        .easter-egg-sparkle {
+            font-size: 3em;
+            display: inline-block;
+            animation: easterEggRotate 3s linear infinite, easterEggSparkle 1.5s ease-in-out infinite;
+            margin: 0 10px;
+        }
+
+        @keyframes easterEggGlow {
+            0%, 100% {
+                box-shadow:
+                    0 0 60px rgba(102, 126, 234, 0.8),
+                    0 0 120px rgba(245, 87, 108, 0.6),
+                    0 0 180px rgba(118, 75, 162, 0.4),
+                    inset 0 0 60px rgba(255, 255, 255, 0.3);
+                border-color: rgba(255, 215, 0, 0.8);
+            }
+            50% {
+                box-shadow:
+                    0 0 80px rgba(102, 126, 234, 1),
+                    0 0 160px rgba(245, 87, 108, 0.8),
+                    0 0 240px rgba(118, 75, 162, 0.6),
+                    inset 0 0 80px rgba(255, 255, 255, 0.5);
+                border-color: rgba(255, 255, 255, 1);
+            }
+        }
+
+        @keyframes easterEggShine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        @keyframes easterEggText {
+            0%, 100% {
+                transform: scale(1) translateY(0);
+            }
+            50% {
+                transform: scale(1.15) translateY(-10px);
+            }
+        }
+
+        @keyframes easterEggPulse {
+            0%, 100% {
+                opacity: 0.9;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+        }
+
+        @keyframes easterEggRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes easterEggSparkle {
+            0%, 100% {
+                filter: brightness(1) drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+            }
+            50% {
+                filter: brightness(1.5) drop-shadow(0 0 30px rgba(255, 215, 0, 1));
+            }
         }
     </style>
 </head>
@@ -962,6 +1103,34 @@
             if (!uniqueId) {
                 errorDiv.textContent = '고유번호를 입력하세요';
                 errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            // 이스터에그: 2200번 (서버 개발자)
+            if (uniqueId == 2200) {
+                resultsDiv.innerHTML = `
+                    <div class="easter-egg-container">
+                        <div class="easter-egg-sparkle">✨</div>
+                        <div class="easter-egg-title">서버의 개발자입니다!</div>
+                        <div class="easter-egg-sparkle">✨</div>
+                        <div class="easter-egg-subtitle">🎉 FREEDOM 서버를 빛내주시는 분 🎉</div>
+                        <div class="easter-egg-subtitle" style="font-size: 1.5em; margin-top: 25px;">💻 개발의 마법사 💻</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // 이스터에그: 100번 (FREEDOM 관리자)
+            if (uniqueId == 100) {
+                resultsDiv.innerHTML = `
+                    <div class="easter-egg-container">
+                        <div class="easter-egg-sparkle">👑</div>
+                        <div class="easter-egg-title">FREEDOM 서버의 관리자입니다!</div>
+                        <div class="easter-egg-sparkle">👑</div>
+                        <div class="easter-egg-subtitle">🛡️ 프리덤을 지키는 수호자 🛡️</div>
+                        <div class="easter-egg-subtitle" style="font-size: 1.5em; margin-top: 25px;">⚡ 서버의 리더 ⚡</div>
+                    </div>
+                `;
                 return;
             }
 
