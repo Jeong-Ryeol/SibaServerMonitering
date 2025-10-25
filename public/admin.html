@@ -522,7 +522,7 @@
                             <span>년</span>
                             <input type="number" id="fraudMonth" placeholder="01" min="1" max="12" maxlength="2" style="width: 70px;" oninput="autoFocusMonth(this)" />
                             <span>월</span>
-                            <input type="number" id="fraudDay" placeholder="01" min="1" max="31" style="width: 70px;" />
+                            <input type="number" id="fraudDay" placeholder="01" min="1" max="31" maxlength="2" style="width: 70px;" oninput="limitDayInput(this)" />
                             <span>일</span>
                         </div>
                     </div>
@@ -862,8 +862,20 @@
 
         // 월 2자리 입력 시 자동으로 일로 포커스 이동
         function autoFocusMonth(input) {
+            // 2자리 초과하면 자르기
+            if (input.value.length > 2) {
+                input.value = input.value.slice(0, 2);
+            }
+            // 정확히 2자리일 때만 다음 필드로 이동
             if (input.value.length === 2) {
                 document.getElementById('fraudDay').focus();
+            }
+        }
+
+        // 일 2자리 제한
+        function limitDayInput(input) {
+            if (input.value.length > 2) {
+                input.value = input.value.slice(0, 2);
             }
         }
 
