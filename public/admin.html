@@ -594,7 +594,10 @@
                             <tr>
                                 <th>ID</th>
                                 <th>날짜</th>
-                                <th>고유번호</th>
+                                <th style="background: linear-gradient(135deg, #fff5f5, #ffe5e5); color: #ff1744; font-weight: 700;">⚠️ 가해자 번호</th>
+                                <th style="background: linear-gradient(135deg, #fff5f5, #ffe5e5); color: #ff1744; font-weight: 700;">⚠️ 가해자 닉네임</th>
+                                <th>피해자 번호</th>
+                                <th>피해자 닉네임</th>
                                 <th>금액</th>
                                 <th>사유</th>
                                 <th>작업</th>
@@ -665,6 +668,20 @@
 
             <!-- 설정 -->
             <div class="tab-content" id="settingsTab">
+                <div class="card">
+                    <h2>고유번호 일괄 변경</h2>
+                    <div id="bulkIdMessage" class="message"></div>
+                    <div class="form-group">
+                        <label>변경할 고유번호 (기존)</label>
+                        <input type="number" id="oldUniqueId" placeholder="예: 100" />
+                    </div>
+                    <div class="form-group">
+                        <label>새 고유번호</label>
+                        <input type="number" id="newUniqueId" placeholder="예: 200" />
+                    </div>
+                    <button class="btn btn-primary" onclick="bulkUpdateUniqueId()">일괄 변경</button>
+                </div>
+
                 <div class="card">
                     <h2>사이트 통계 설정</h2>
                     <div id="statsMessage" class="message"></div>
@@ -1047,18 +1064,34 @@
                 if (data.success && data.data.length > 0) {
                     data.data.forEach(report => {
                         const tr = document.createElement('tr');
+
+                        // 금액 표시 처리
+                        let amountDisplay;
+                        if (report.amount_type === 'item') {
+                            amountDisplay = report.amount;
+                        } else if (report.amount_type === 'both') {
+                            amountDisplay = report.amount;
+                        } else {
+                            // money type
+                            const numAmount = typeof report.amount === 'number' ? report.amount : parseInt(report.amount.replace(/,/g, ''));
+                            amountDisplay = numAmount.toLocaleString();
+                        }
+
                         tr.innerHTML = `
                             <td>${report.id}</td>
                             <td>${new Date(report.report_date).toLocaleDateString('ko-KR')}</td>
-                            <td>${report.unique_id}</td>
-                            <td>${report.amount.toLocaleString()}</td>
-                            <td>${report.reason.substring(0, 50)}${report.reason.length > 50 ? '...' : ''}</td>
-                            <td><button class="btn btn-danger" onclick="deleteFraudReport(${report.id})">Delete</button></td>
+                            <td style="background: linear-gradient(135deg, #fff5f5, #ffe5e5); color: #ff1744; font-weight: 700; font-size: 1.1em;">${report.attacker_id || '-'}</td>
+                            <td style="background: linear-gradient(135deg, #fff5f5, #ffe5e5); color: #ff1744; font-weight: 700;">${report.attacker_nickname || '-'}</td>
+                            <td style="color: #333; font-weight: 600;">${report.victim_id || '-'}</td>
+                            <td style="color: #333;">${report.victim_nickname || '-'}</td>
+                            <td>${amountDisplay}</td>
+                            <td>${report.reason.substring(0, 30)}${report.reason.length > 30 ? '...' : ''}</td>
+                            <td><button class="btn btn-danger" onclick="deleteFraudReport(${report.id})">삭제</button></td>
                         `;
                         tbody.appendChild(tr);
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No reports found</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">등록된 신고가 없습니다</td></tr>';
                 }
             } catch (error) {
                 console.error('Failed to load fraud reports:', error);
@@ -1355,6 +1388,51 @@
                 }
             } catch (error) {
                 console.error('Failed to load stats:', error);
+            }
+        }
+
+        // 고유번호 일괄 변경
+        async function bulkUpdateUniqueId() {
+            const messageDiv = document.getElementById('bulkIdMessage');
+            const oldId = document.getElementById('oldUniqueId').value;
+            const newId = document.getElementById('newUniqueId').value;
+
+            if (!oldId || !newId) {
+                showMessage(messageDiv, '기존 고유번호와 새 고유번호를 모두 입력하세요', 'error');
+                return;
+            }
+
+            if (oldId === newId) {
+                showMessage(messageDiv, '기존 고유번호와 새 고유번호가 같습니다', 'error');
+                return;
+            }
+
+            if (!confirm(`고유번호 ${oldId}을(를) ${newId}(으)로 일괄 변경하시겠습니까?\n관련된 모든 사기 신고 기록이 업데이트됩니다.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/bulk-update-id', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        oldId: parseInt(oldId),
+                        newId: parseInt(newId)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(messageDiv, `성공적으로 ${data.updatedCount}개의 레코드를 업데이트했습니다`, 'success');
+                    document.getElementById('oldUniqueId').value = '';
+                    document.getElementById('newUniqueId').value = '';
+                    loadFraudReports();
+                } else {
+                    showMessage(messageDiv, data.message || '업데이트 실패', 'error');
+                }
+            } catch (error) {
+                showMessage(messageDiv, '서버 오류가 발생했습니다', 'error');
             }
         }
     </script>

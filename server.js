@@ -334,6 +334,36 @@ app.get('/api/admin/active-admins', requireAdmin, (req, res) => {
   });
 });
 
+// 고유번호 일괄 변경 (관리자용)
+app.post('/api/admin/bulk-update-id', requireAdmin, (req, res) => {
+  const { oldId, newId } = req.body;
+
+  if (!oldId || !newId) {
+    return res.status(400).json({ success: false, message: '기존 고유번호와 새 고유번호를 모두 입력하세요' });
+  }
+
+  if (oldId === newId) {
+    return res.status(400).json({ success: false, message: '기존 고유번호와 새 고유번호가 같습니다' });
+  }
+
+  // unique_id, victim_id, attacker_id 모두 업데이트
+  db.query(
+    'UPDATE fraud_reports SET unique_id = ?, victim_id = CASE WHEN victim_id = ? THEN ? ELSE victim_id END, attacker_id = CASE WHEN attacker_id = ? THEN ? ELSE attacker_id END WHERE victim_id = ? OR attacker_id = ?',
+    [newId, oldId, newId, oldId, newId, oldId, oldId],
+    (err, result) => {
+      if (err) {
+        console.error('Bulk update error:', err);
+        return res.status(500).json({ success: false, message: '업데이트 실패' });
+      }
+      res.json({
+        success: true,
+        message: '고유번호가 일괄 변경되었습니다',
+        updatedCount: result.affectedRows
+      });
+    }
+  );
+});
+
 // ==================== 제보 제출 API ====================
 
 // 사용자 제보 제출
