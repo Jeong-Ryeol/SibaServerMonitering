@@ -14,7 +14,7 @@
 
 ```bash
 # MySQL 접속
-mysql -u webapp_user -p fraud_reports_db
+mysql -u webapp_user -p webapp_db
 
 # SQL 파일 실행
 source /path/to/update_passwords.sql
