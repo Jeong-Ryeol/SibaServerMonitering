@@ -543,6 +543,17 @@
             }
         }
 
+        @keyframes attackerPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 23, 68, 0.4), 0 0 40px rgba(255, 107, 107, 0.2);
+                border-color: #ff6b6b;
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 23, 68, 0.6), 0 0 60px rgba(255, 107, 107, 0.4);
+                border-color: #ff1744;
+            }
+        }
+
         .blacklist-header {
             text-align: center;
             padding: 40px;
@@ -931,42 +942,56 @@
                     item.className = 'result-item';
                     item.innerHTML = `
                         <h3>사건번호 #${report.id}</h3>
-                        <div class="result-detail">
-                            <div class="result-detail-item">
-                                <div class="result-detail-label">피해자 고유번호</div>
-                                <div class="result-detail-value">${report.victim_id || '-'}</div>
+
+                        <!-- 1줄: 날짜 -->
+                        <div style="margin-bottom: 15px; padding: 12px; background: white; border-radius: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 0.9em; color: #999; font-weight: 500;">📅 날짜:</span>
+                                <span style="font-size: 1.1em; font-weight: 700; color: #333;">${new Date(report.report_date).toLocaleDateString('ko-KR')}</span>
                             </div>
-                            <div class="result-detail-item">
-                                <div class="result-detail-label">피해자 닉네임</div>
-                                <div class="result-detail-value">${report.victim_nickname || '-'}</div>
+                        </div>
+
+                        <!-- 2줄: 가해자 → 피해자 -->
+                        <div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, #fff5f5, #ffe5e5); border-radius: 10px; border: 2px solid #ff6b6b; animation: attackerPulse 2s ease-in-out infinite;">
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; align-items: center;">
+                                <div>
+                                    <div style="font-size: 0.85em; color: #ff3838; font-weight: 600; margin-bottom: 5px;">⚠️ 가해자 번호</div>
+                                    <div style="font-size: 1.3em; font-weight: 900; color: #ff1744;">${report.attacker_id || '-'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85em; color: #ff3838; font-weight: 600; margin-bottom: 5px;">⚠️ 가해자 닉네임</div>
+                                    <div style="font-size: 1.3em; font-weight: 900; color: #ff1744;">${report.attacker_nickname || '-'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85em; color: #666; font-weight: 500; margin-bottom: 5px;">👤 피해자 번호</div>
+                                    <div style="font-size: 1.1em; font-weight: 700; color: #333;">${report.victim_id || '-'}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.85em; color: #666; font-weight: 500; margin-bottom: 5px;">👤 피해자 닉네임</div>
+                                    <div style="font-size: 1.1em; font-weight: 700; color: #333;">${report.victim_nickname || '-'}</div>
+                                </div>
                             </div>
-                            <div class="result-detail-item">
-                                <div class="result-detail-label">가해자 고유번호</div>
-                                <div class="result-detail-value">${report.attacker_id || '-'}</div>
-                            </div>
-                            <div class="result-detail-item">
-                                <div class="result-detail-label">가해자 닉네임</div>
-                                <div class="result-detail-value">${report.attacker_nickname || '-'}</div>
-                            </div>
-                            <div class="result-detail-item">
-                                <div class="result-detail-label">날짜</div>
-                                <div class="result-detail-value">${new Date(report.report_date).toLocaleDateString('ko-KR')}</div>
-                            </div>
-                            <div class="result-detail-item">
-                                <div class="result-detail-label">${report.amount_type === 'item' ? '아이템' : report.amount_type === 'both' ? '금액/아이템' : '금액'}</div>
-                                <div class="result-detail-value">
+                        </div>
+
+                        <!-- 3줄: 금액 -->
+                        <div style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 0.9em; color: #999; font-weight: 500;">${report.amount_type === 'item' ? '🎁 아이템:' : report.amount_type === 'both' ? '💎 금액/아이템:' : '💰 금액:'}</span>
+                                <span style="font-size: 1.3em; font-weight: 900; color: #667eea;">
                                     ${report.amount_type === 'item'
                                         ? report.amount
                                         : report.amount_type === 'both'
                                             ? report.amount
-                                            : `${parseInt(report.amount).toLocaleString()} <span style="font-size: 0.85em; color: #999; margin-left: 8px;">(${numberToKorean(parseInt(report.amount))})</span>`
+                                            : `${parseInt(report.amount).toLocaleString()} <span style="font-size: 0.75em; color: #999; margin-left: 8px;">(${numberToKorean(parseInt(report.amount))})</span>`
                                     }
-                                </div>
+                                </span>
                             </div>
                         </div>
-                        <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 10px;">
-                            <div class="result-detail-label">사유</div>
-                            <div class="result-detail-value">${report.reason}</div>
+
+                        <!-- 사유 -->
+                        <div style="padding: 15px; background: white; border-radius: 10px;">
+                            <div class="result-detail-label">📝 사유</div>
+                            <div class="result-detail-value" style="margin-top: 8px;">${report.reason}</div>
                         </div>
                     `;
                     resultsDiv.appendChild(item);
