@@ -517,7 +517,14 @@
                     <div id="fraudMessage" class="message"></div>
                     <div class="form-group">
                         <label>신고 날짜</label>
-                        <input type="date" id="fraudDate" />
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="fraudYear" placeholder="2025" min="2000" max="2099" style="width: 100px;" oninput="autoFocusYear(this)" />
+                            <span>년</span>
+                            <input type="number" id="fraudMonth" placeholder="01" min="1" max="12" style="width: 70px;" oninput="autoFocusMonth(this)" />
+                            <span>월</span>
+                            <input type="number" id="fraudDay" placeholder="01" min="1" max="31" style="width: 70px;" />
+                            <span>일</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>고유번호</label>
@@ -846,17 +853,36 @@
         }
 
         // 사기 신고 추가
+        // 연도 4자리 입력 시 자동으로 월로 포커스 이동
+        function autoFocusYear(input) {
+            if (input.value.length === 4) {
+                document.getElementById('fraudMonth').focus();
+            }
+        }
+
+        // 월 2자리 입력 시 자동으로 일로 포커스 이동
+        function autoFocusMonth(input) {
+            if (input.value.length === 2) {
+                document.getElementById('fraudDay').focus();
+            }
+        }
+
         async function addFraudReport() {
             const messageDiv = document.getElementById('fraudMessage');
-            const reportDate = document.getElementById('fraudDate').value;
+            const year = document.getElementById('fraudYear').value;
+            const month = document.getElementById('fraudMonth').value;
+            const day = document.getElementById('fraudDay').value;
             const uniqueId = document.getElementById('fraudUniqueId').value;
             const amount = document.getElementById('fraudAmount').value;
             const reason = document.getElementById('fraudReason').value;
 
-            if (!reportDate || !uniqueId || !amount || !reason) {
+            if (!year || !month || !day || !uniqueId || !amount || !reason) {
                 showMessage(messageDiv, 'Please fill in all fields', 'error');
                 return;
             }
+
+            // 날짜 포맷팅 (YYYY-MM-DD)
+            const reportDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 
             try {
                 const response = await fetch('/api/admin/fraud-reports', {
@@ -869,7 +895,9 @@
 
                 if (data.success) {
                     showMessage(messageDiv, data.message, 'success');
-                    document.getElementById('fraudDate').value = '';
+                    document.getElementById('fraudYear').value = '';
+                    document.getElementById('fraudMonth').value = '';
+                    document.getElementById('fraudDay').value = '';
                     document.getElementById('fraudUniqueId').value = '';
                     document.getElementById('fraudAmount').value = '';
                     document.getElementById('fraudReason').value = '';
