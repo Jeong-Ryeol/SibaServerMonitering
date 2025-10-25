@@ -160,6 +160,25 @@ app.post('/api/admin/verify-password', (req, res) => {
   });
 });
 
+// 관리자 로그아웃
+app.post('/api/admin/logout', (req, res) => {
+  if (req.session && req.session.adminAuthorized) {
+    // 활성 세션에서 제거
+    activeAdminSessions.delete(req.sessionID);
+    console.log(`관리자 로그아웃: ${req.sessionID}`);
+
+    // 세션 파괴
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '로그아웃 실패' });
+      }
+      res.json({ success: true, message: '로그아웃 되었습니다.' });
+    });
+  } else {
+    res.json({ success: true, message: '이미 로그아웃 상태입니다.' });
+  }
+});
+
 // 관리자 인증 미들웨어
 const requireAdmin = (req, res, next) => {
   if (!req.session.adminAuthorized) {

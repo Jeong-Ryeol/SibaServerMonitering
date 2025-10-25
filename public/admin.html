@@ -492,7 +492,10 @@
     <div class="container">
         <div class="admin-panel" id="adminPanel">
             <div class="header">
-                <h1>FIVEM : FREEDOM - 관리자 패널</h1>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h1 style="margin: 0;">FIVEM : FREEDOM - 관리자 패널</h1>
+                    <button class="btn btn-danger" onclick="logout()" style="padding: 12px 25px; font-size: 1em; background: linear-gradient(135deg, #f5576c, #dc3545); box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);">로그아웃</button>
+                </div>
                 <div style="margin-top: 25px; padding: 30px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85)); border-radius: 25px; text-align: center; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.2); border: 3px solid rgba(255, 255, 255, 0.3); animation: pulse 3s ease-in-out infinite;">
                     <div style="font-size: 1.3em; color: #533483; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px;">접속 중인 관리자</div>
                     <div id="activeAdminsCount" style="font-size: 4em; font-weight: 900; background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: none; animation: shimmer 3s ease-in-out infinite;">-</div>
@@ -776,6 +779,38 @@
             setInterval(() => {
                 loadActiveAdmins();
             }, 10000); // 10초
+        }
+
+        // 로그아웃
+        async function logout() {
+            if (!confirm('로그아웃 하시겠습니까?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/logout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // 로그인 화면으로 전환
+                    document.getElementById('adminPanel').classList.remove('active');
+                    document.getElementById('loginScreen').style.display = 'flex';
+
+                    // 비밀번호 입력란 초기화
+                    document.getElementById('adminPassword').value = '';
+
+                    alert('로그아웃 되었습니다.');
+                } else {
+                    alert('로그아웃 실패: ' + data.message);
+                }
+            } catch (error) {
+                console.error('로그아웃 오류:', error);
+                alert('로그아웃 중 오류가 발생했습니다.');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
