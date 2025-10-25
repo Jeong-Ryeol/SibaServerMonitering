@@ -812,7 +812,6 @@
             const errorDiv = document.getElementById('searchError');
 
             errorDiv.classList.add('hidden');
-            resultsDiv.innerHTML = '';
 
             if (!uniqueId) {
                 errorDiv.textContent = '고유번호를 입력하세요';
@@ -838,7 +837,7 @@
                     return;
                 }
 
-                // 블랙리스트 헤더 추가
+                // 블랙리스트 헤더 추가 (깜빡임 방지 - 내용이 바뀔 때만 업데이트)
                 resultsDiv.innerHTML = '<div class="blacklist-header"><div class="blacklist-title">⚠️ 블랙리스트 ⚠️</div></div>';
 
                 data.data.forEach(report => {
