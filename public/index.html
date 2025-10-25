@@ -696,10 +696,12 @@
 
         /* 광고 카드 스타일 */
         .ads-container {
-            position: absolute;
+            position: fixed;
             right: 20px;
             top: 20px;
             width: 320px;
+            max-height: 90vh;
+            overflow-y: auto;
             z-index: 100;
             display: none;
         }
@@ -707,10 +709,6 @@
         @media (min-width: 1400px) {
             .ads-container {
                 display: block;
-            }
-
-            body {
-                position: relative;
             }
         }
 
@@ -726,20 +724,18 @@
             animation: fadeInUp 0.6s ease-out;
         }
 
-        .ad-header-title {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .ad-header-subtitle {
-            font-size: 1.3em;
-            font-weight: 900;
+        .ad-header-line {
+            font-size: 1.0em;
+            font-weight: 800;
             background: linear-gradient(135deg, #667eea, #f5576c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .ad-header-line:last-child {
+            margin-bottom: 0;
         }
 
         .ad-card {
@@ -941,9 +937,9 @@
     <div class="ads-container" id="adsContainer">
         <!-- 고정 헤더 카드 -->
         <div class="ad-header-card">
-            <div class="ad-header-title">파트너쉽</div>
-            <div class="ad-header-title">무장 담보대출</div>
-            <div class="ad-header-subtitle">문의 : 무장 (100)</div>
+            <div class="ad-header-line">📋 파트너쉽 📋</div>
+            <div class="ad-header-line">무장 담보대출</div>
+            <div class="ad-header-line">문의 : 무장 (100)</div>
         </div>
         <!-- 동적 광고들이 여기에 추가됨 -->
     </div>
