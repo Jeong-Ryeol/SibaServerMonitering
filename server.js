@@ -39,28 +39,29 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 app.use(express.static('public'));
 
-// 활성 관리자 세션 추적
-const activeAdminSessions = new Set();
+// 활성 관리자 세션 추적 (sessionID -> 마지막 활동 시간)
+const activeAdminSessions = new Map();
 
 // 세션 활동 업데이트 미들웨어
 app.use((req, res, next) => {
   if (req.session && req.session.adminAuthorized) {
-    req.session.lastActivity = Date.now();
-    activeAdminSessions.add(req.sessionID);
+    activeAdminSessions.set(req.sessionID, Date.now());
   }
   next();
 });
 
-// 만료된 세션 정리 (1분마다)
+// 만료된 세션 정리 (30초마다)
 setInterval(() => {
   const now = Date.now();
-  const sessionTimeout = 24 * 60 * 60 * 1000; // 24시간
+  const timeout = 2 * 60 * 1000; // 2분 동안 활동 없으면 제거
 
-  activeAdminSessions.forEach(sessionId => {
-    // 실제로는 세션 스토어에서 확인해야 하지만, 간단하게 구현
-    // 세션이 만료되면 자동으로 제거됨
+  activeAdminSessions.forEach((lastActivity, sessionId) => {
+    if (now - lastActivity > timeout) {
+      activeAdminSessions.delete(sessionId);
+      console.log(`관리자 세션 만료: ${sessionId}`);
+    }
   });
-}, 60000);
+}, 30000); // 30초마다 체크
 
 // ==================== 사용자 API ====================
 
@@ -151,7 +152,7 @@ app.post('/api/admin/verify-password', (req, res) => {
 
     if (results.length > 0 && results[0].password === password) {
       req.session.adminAuthorized = true;
-      activeAdminSessions.add(req.sessionID);
+      activeAdminSessions.set(req.sessionID, Date.now());
       res.json({ success: true });
     } else {
       res.json({ success: false, message: '관리자 비밀번호가 올바르지 않습니다.' });
