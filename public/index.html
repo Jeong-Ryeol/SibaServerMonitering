@@ -706,6 +706,17 @@
             display: none;
         }
 
+        /* 스크롤바 숨기기 */
+        .ads-container::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        .ads-container {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
         @media (min-width: 1400px) {
             .ads-container {
                 display: block;
