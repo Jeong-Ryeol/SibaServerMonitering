@@ -518,11 +518,11 @@
                     <div class="form-group">
                         <label>신고 날짜</label>
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="number" id="fraudYear" placeholder="2025" min="2000" max="2099" style="width: 100px;" />
+                            <input type="text" id="fraudYear" placeholder="2025" maxlength="4" style="width: 100px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                             <span>년</span>
-                            <input type="number" id="fraudMonth" placeholder="01" min="1" max="12" style="width: 70px;" />
+                            <input type="text" id="fraudMonth" placeholder="01" maxlength="2" style="width: 70px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                             <span>월</span>
-                            <input type="number" id="fraudDay" placeholder="01" min="1" max="31" style="width: 70px;" />
+                            <input type="text" id="fraudDay" placeholder="01" maxlength="2" style="width: 70px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                             <span>일</span>
                         </div>
                     </div>
