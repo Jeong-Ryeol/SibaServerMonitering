@@ -532,14 +532,18 @@
                     </div>
                     <div class="form-group">
                         <label>금액/아이템 타입</label>
-                        <div style="display: flex; gap: 15px; margin-bottom: 15px; background: #f8f9fa; padding: 15px; border-radius: 12px;">
-                            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px 20px; background: white; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; flex: 1; justify-content: center; font-weight: 600;">
-                                <input type="radio" name="amountType" value="money" checked onchange="toggleAmountInput(); updateRadioStyle()" style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer;" />
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px; background: #f8f9fa; padding: 15px; border-radius: 12px; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px 15px; background: white; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; flex: 1; min-width: 120px; justify-content: center; font-weight: 600;">
+                                <input type="radio" name="amountType" value="money" checked onchange="toggleAmountInput(); updateRadioStyle()" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;" />
                                 💰 금액
                             </label>
-                            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px 20px; background: white; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; flex: 1; justify-content: center; font-weight: 600;">
-                                <input type="radio" name="amountType" value="item" onchange="toggleAmountInput(); updateRadioStyle()" style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer;" />
+                            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px 15px; background: white; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; flex: 1; min-width: 120px; justify-content: center; font-weight: 600;">
+                                <input type="radio" name="amountType" value="item" onchange="toggleAmountInput(); updateRadioStyle()" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;" />
                                 🎁 아이템
+                            </label>
+                            <label style="display: flex; align-items: center; cursor: pointer; padding: 10px 15px; background: white; border-radius: 8px; border: 2px solid #e0e0e0; transition: all 0.3s; flex: 1; min-width: 120px; justify-content: center; font-weight: 600;">
+                                <input type="radio" name="amountType" value="both" onchange="toggleAmountInput(); updateRadioStyle()" style="margin-right: 8px; width: 18px; height: 18px; cursor: pointer;" />
+                                💎 둘 다
                             </label>
                         </div>
                         <div class="amount-input-wrapper" id="moneyInput">
@@ -548,6 +552,19 @@
                         </div>
                         <div id="itemInput" style="display: none;">
                             <input type="text" id="fraudItem" placeholder="예: 람보르기니, 다이아몬드 x5" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;" />
+                        </div>
+                        <div id="bothInput" style="display: none;">
+                            <div style="margin-bottom: 10px;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">금액</label>
+                                <div class="amount-input-wrapper">
+                                    <input type="number" id="fraudAmountBoth" placeholder="500000" oninput="updateAmountDisplay('fraudAmountBoth', 'fraudAmountDisplayBoth')" />
+                                    <span class="amount-unit-display" id="fraudAmountDisplayBoth"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #555;">아이템</label>
+                                <input type="text" id="fraudItemBoth" placeholder="예: 람보르기니, 다이아몬드 x5" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;" />
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -905,13 +922,18 @@
             const amountType = document.querySelector('input[name="amountType"]:checked').value;
             const moneyInput = document.getElementById('moneyInput');
             const itemInput = document.getElementById('itemInput');
+            const bothInput = document.getElementById('bothInput');
+
+            moneyInput.style.display = 'none';
+            itemInput.style.display = 'none';
+            bothInput.style.display = 'none';
 
             if (amountType === 'money') {
                 moneyInput.style.display = 'block';
-                itemInput.style.display = 'none';
-            } else {
-                moneyInput.style.display = 'none';
+            } else if (amountType === 'item') {
                 itemInput.style.display = 'block';
+            } else if (amountType === 'both') {
+                bothInput.style.display = 'block';
             }
         }
 
@@ -928,7 +950,22 @@
             const day = document.getElementById('fraudDay').value;
             const uniqueId = document.getElementById('fraudUniqueId').value;
             const amountType = document.querySelector('input[name="amountType"]:checked').value;
-            const amount = amountType === 'money' ? document.getElementById('fraudAmount').value : document.getElementById('fraudItem').value;
+            let amount;
+
+            if (amountType === 'money') {
+                amount = document.getElementById('fraudAmount').value;
+            } else if (amountType === 'item') {
+                amount = document.getElementById('fraudItem').value;
+            } else if (amountType === 'both') {
+                const moneyPart = document.getElementById('fraudAmountBoth').value;
+                const itemPart = document.getElementById('fraudItemBoth').value;
+                if (!moneyPart || !itemPart) {
+                    showMessage(messageDiv, 'Please fill in all fields', 'error');
+                    return;
+                }
+                amount = `${parseInt(moneyPart).toLocaleString()} + ${itemPart}`;
+            }
+
             const reason = document.getElementById('fraudReason').value;
 
             if (!year || !month || !day || !uniqueId || !amount || !reason) {
@@ -962,9 +999,12 @@
                     document.getElementById('fraudUniqueId').value = '';
                     document.getElementById('fraudAmount').value = '';
                     document.getElementById('fraudItem').value = '';
+                    document.getElementById('fraudAmountBoth').value = '';
+                    document.getElementById('fraudItemBoth').value = '';
                     document.getElementById('fraudReason').value = '';
                     document.querySelector('input[name="amountType"][value="money"]').checked = true;
                     toggleAmountInput();
+                    updateRadioStyle();
                     loadFraudReports();
                 } else {
                     showMessage(messageDiv, data.message || 'Failed to add report', 'error');

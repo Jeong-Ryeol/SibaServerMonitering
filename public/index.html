@@ -941,11 +941,13 @@
                                 <div class="result-detail-value">${report.unique_id}</div>
                             </div>
                             <div class="result-detail-item">
-                                <div class="result-detail-label">${report.amount_type === 'item' ? '아이템' : '금액'}</div>
+                                <div class="result-detail-label">${report.amount_type === 'item' ? '아이템' : report.amount_type === 'both' ? '금액/아이템' : '금액'}</div>
                                 <div class="result-detail-value">
                                     ${report.amount_type === 'item'
                                         ? report.amount
-                                        : `${parseInt(report.amount).toLocaleString()} <span style="font-size: 0.85em; color: #999; margin-left: 8px;">(${numberToKorean(parseInt(report.amount))})</span>`
+                                        : report.amount_type === 'both'
+                                            ? report.amount
+                                            : `${parseInt(report.amount).toLocaleString()} <span style="font-size: 0.85em; color: #999; margin-left: 8px;">(${numberToKorean(parseInt(report.amount))})</span>`
                                     }
                                 </div>
                             </div>
