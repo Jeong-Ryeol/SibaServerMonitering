@@ -888,11 +888,12 @@
                 const data = await response.json();
 
                 if (!data.success) {
-                    errorDiv.textContent = data.message || '조회 실패';
                     // 세션 만료 메시지인 경우 특별한 스타일 적용
                     if (data.message && data.message.includes('세션 만료')) {
+                        errorDiv.textContent = `🚧 ${data.message} 🚧`;
                         errorDiv.classList.add('session-expired');
                     } else {
+                        errorDiv.textContent = data.message || '조회 실패';
                         errorDiv.classList.remove('session-expired');
                     }
                     errorDiv.classList.remove('hidden');
