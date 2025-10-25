@@ -945,7 +945,7 @@
                                 <div class="result-detail-value">
                                     ${report.amount_type === 'item'
                                         ? report.amount
-                                        : `${report.amount.toLocaleString()} <span style="font-size: 0.85em; color: #999; margin-left: 8px;">(${numberToKorean(report.amount)})</span>`
+                                        : `${parseInt(report.amount).toLocaleString()} <span style="font-size: 0.85em; color: #999; margin-left: 8px;">(${numberToKorean(parseInt(report.amount))})</span>`
                                     }
                                 </div>
                             </div>
