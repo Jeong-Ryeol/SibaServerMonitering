@@ -391,10 +391,7 @@ app.post('/api/admin/bulk-update-id', requireAdmin, (req, res) => {
     params = [newId, oldId];
     message = '피해자 고유번호가 일괄 변경되었습니다';
   } else {
-    // 둘 다 변경 (기본값)
-    query = 'UPDATE fraud_reports SET unique_id = ?, victim_id = CASE WHEN victim_id = ? THEN ? ELSE victim_id END, attacker_id = CASE WHEN attacker_id = ? THEN ? ELSE attacker_id END WHERE victim_id = ? OR attacker_id = ?';
-    params = [newId, oldId, newId, oldId, newId, oldId, oldId];
-    message = '가해자/피해자 고유번호가 일괄 변경되었습니다';
+    return res.status(400).json({ success: false, message: '변경 대상을 선택하세요' });
   }
 
   db.query(query, params, (err, result) => {

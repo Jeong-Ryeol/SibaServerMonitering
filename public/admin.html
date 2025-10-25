@@ -676,15 +676,11 @@
                         <div style="display: flex; gap: 20px; margin-bottom: 10px;">
                             <label style="display: flex; align-items: center; cursor: pointer;">
                                 <input type="radio" name="updateType" value="attacker" checked style="margin-right: 5px;">
-                                가해자만
+                                가해자
                             </label>
                             <label style="display: flex; align-items: center; cursor: pointer;">
                                 <input type="radio" name="updateType" value="victim" style="margin-right: 5px;">
-                                피해자만
-                            </label>
-                            <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="radio" name="updateType" value="both" style="margin-right: 5px;">
-                                둘 다
+                                피해자
                             </label>
                         </div>
                     </div>
@@ -1452,7 +1448,7 @@
                 return;
             }
 
-            const typeText = updateType === 'attacker' ? '가해자' : updateType === 'victim' ? '피해자' : '가해자/피해자';
+            const typeText = updateType === 'attacker' ? '가해자' : '피해자';
             if (!confirm(`${typeText} 고유번호 ${oldId}을(를) ${newId}(으)로 일괄 변경하시겠습니까?\n관련된 모든 사기 신고 기록이 업데이트됩니다.`)) {
                 return;
             }
